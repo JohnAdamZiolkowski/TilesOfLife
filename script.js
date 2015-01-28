@@ -14,7 +14,10 @@ var cellsPrev;
 var entitiesPrev;
 var cell_types;
 var entity_types;
+var entity_types2; //TEMPORARY
+var action_types;
 var populations;
+var base_entity;
 
 var score;
 var message;
@@ -69,7 +72,11 @@ var init = function () {
   set_colors();
   set_cell_types();
   set_entity_types();
+  set_entity_types2();
+  set_action_types();
   set_defaults();
+  
+  base_entity = new Entity();
 
   board = new Board(board_position, board_size, board_grid,
     board_depth, line_width);
@@ -176,21 +183,21 @@ var Cursor = function (position, size, speed) {
 
     this.x += distance.x;
     this.y += distance.y;
-    
+
     this.contain();
   };
   this.contain = function () {
     if (this.x < 0)
       this.x = 0;
     else if (this.x >= canvas.width)
-      this.x = canvas.width-1;
+      this.x = canvas.width - 1;
     if (this.y < 0)
       this.y = 0;
     else if (this.y >= canvas.height)
-      this.y = canvas.height-1;
+      this.y = canvas.height - 1;
   };
-  
-  
+
+
   this.set_type = function (entity, type) {
     this.entity = entity;
     this.type = type;
@@ -609,7 +616,7 @@ var Board = function (position, size, grid, depth, line_width) {
     cells[col][row] = cell_type.make();
   };
   this.set_entity = function (col, row, entity_type) {
-    entities[col][row] = entity_type.make();
+    entities[col][row] = base_entity.make(entity_type);
   };
   this.fill_cells = function (cell_type) {
     for (var row = 0; row < this.rows; row++) {
@@ -645,15 +652,10 @@ var Color = function (red, green, blue) {
 //region cell and entity definitions
 
 var NoEntity = function () {
-  this.name = "no entity";
+  this.name = "noEntity";
   this.color = colors.cursor;
   this.make = function () {
     return new NoEntity();
-  }
-  this.about = function () {
-    var string = "";
-    string += "<br>&nbsp&nbsp- " + this.name;
-    return string;
   };
 };
 var Sheep = function () {
@@ -663,84 +665,25 @@ var Sheep = function () {
   this.max_food = 4;
   this.max_health = 4;
   this.max_water = 4;
+  this.spawn = entity_types.sheepling;
+  this.grazing_type = cell_types.grass;
 
-  this.food = this.max_food;
-  this.health = this.max_health;
-  this.water = this.max_water;
+  this.age = 0;
+  this.food = this.max_food / 2;
+  this.health = this.max_health / 2;
+  this.water = this.max_water / 2;
 
   this.randomize = function () {
     this.food = get_random_int(1, this.max_food);
     this.health = get_random_int(1, this.max_health);
     this.water = get_random_int(1, this.max_water);
   };
-  this.reproduce = function () {
-    this.food = 2;
-    //spawn sheep nearby
-  };
-  this.eat = function () {
-    this.food += 1;
-    if (this.food > this.max_food) {
-      alert(this.name + "has eaten too much food");
-    }
-  };
   this.make = function () {
     return new Sheep();
   }
-  this.about = function () {
-    var string = "";
-    string += "<br>&nbsp&nbsp> type: " + this.name;
-    string += "<br>&nbsp&nbsp> food: " + this.food + "/" + this.max_food;
-    string += "<br>&nbsp&nbsp> health: " + this.health + "/" + this.max_health;
-    string += "<br>&nbsp&nbsp> water: " + this.water + "/" + this.max_water;
-    return string;
-  };
   this.next_phase = function (col, row) {
-    this.food--;
-
-    if (check_cell_type(cellsPrev[col][row], cell_types.grass)) {
-      if (this.food < this.max_food) {
-        this.food += 2;
-        //eat the grass cell
-        cells[col][row].grass--;
-        if (cells[col][row].grass <= 0) {
-          board.set_cell(col, row, cell_types.dirt);
-        }
-      }
-      //breed
-      //if well fed
-      //if empty cell nearby
-      if (this.food >= this.max_food) {
-        var baby_location = new Array();
-        if (col > 0)
-          if (check_entity_type(entities[col - 1][row], entity_types.noEntity)) {
-            baby_location.push(new Point(col - 1, row));
-          }
-        if (col < board.cols - 1)
-          if (check_entity_type(entities[col + 1][row], entity_types.noEntity)) {
-            baby_location.push(new Point(col + 1, row));
-          }
-        if (row > 0)
-          if (check_entity_type(entities[col][row - 1], entity_types.noEntity)) {
-            baby_location.push(new Point(col, row - 1));
-          }
-        if (row < board.rows - 1)
-          if (check_entity_type(entities[col][row + 1], entity_types.noEntity)) {
-            baby_location.push(new Point(col, row + 1));
-          }
-          //create new sheepling
-        if (baby_location.length > 0) {
-          baby_location = baby_location[get_random_int(0, baby_location.length - 1)];
-          this.food = this.max_food / 2;
-          board.set_entity(baby_location.x, baby_location.y, entity_types.sheepling);
-        } else {
-          this.food = this.max_food;
-        }
-      }
-    }
-    //die
-    if (this.food <= 0) {
-      board.set_entity(col, row, entity_types.noEntity);
-    }
+    this.age++;
+    base_entity.choose_action(this, col, row);
   };
 };
 var Wolf = function () {
@@ -751,38 +694,52 @@ var Wolf = function () {
   this.max_health = 4;
   this.max_water = 4;
 
-  this.food = this.max_food;
-  this.health = this.max_health;
-  this.water = this.max_water;
+  this.age = 0;
+  this.food = this.max_food / 2;
+  this.health = this.max_health / 2;
+  this.water = this.max_water / 2;
+  this.spawn = entity_types.wolfling;
 
   this.randomize = function () {
     this.food = get_random_int(1, this.max_food);
     this.health = get_random_int(1, this.max_health);
     this.water = get_random_int(1, this.max_water);
   };
-  this.reproduce = function () {
-    this.food = 2;
-    //spawn wolf nearby
-  };
-  this.eat = function () {
-    this.food += 1;
-    if (this.food > this.max_food) {
-      alert(this.name + "has eaten too much food");
-    }
-  };
   this.make = function () {
     return new Wolf();
   };
-  this.about = function () {
-    var string = "";
-    string += "<br>&nbsp&nbsp> type: " + this.name;
-    string += "<br>&nbsp&nbsp> food: " + this.food + "/" + this.max_food;
-    string += "<br>&nbsp&nbsp> health: " + this.health + "/" + this.max_health;
-    string += "<br>&nbsp&nbsp> water: " + this.water + "/" + this.max_water;
-    return string;
-  };
-};
+  this.next_phase = function (col, row) {
+    this.age++;
+    base_entity.choose_action(this, col, row);
+  }
 
+};
+var get_adjacent_entities_locations = function (col, row, entity_type) {
+  var locations = new Array();
+  if (col > 0)
+    if (check_entity_type(entities[col - 1][row], entity_type)) {
+      locations.push(new Point(col - 1, row));
+    }
+  if (col < board.cols - 1)
+    if (check_entity_type(entities[col + 1][row], entity_type)) {
+      locations.push(new Point(col + 1, row));
+    }
+  if (row > 0)
+    if (check_entity_type(entities[col][row - 1], entity_type)) {
+      locations.push(new Point(col, row - 1));
+    }
+  if (row < board.rows - 1)
+    if (check_entity_type(entities[col][row + 1], entity_type)) {
+      locations.push(new Point(col, row + 1));
+    }
+  return locations;
+};
+var get_random_item = function (array) {
+  if (array.length > 0)
+    return array[get_random_int(0, array.length - 1)];
+  else
+    return false;
+};
 var Sheepling = function () {
   this.name = "sheepling";
   this.color = colors.sheepling;
@@ -791,54 +748,212 @@ var Sheepling = function () {
   this.max_health = 4;
   this.max_water = 4;
   this.ling = true;
+  this.adult = entity_types.sheep;
+  this.max_age = 4;
 
-  this.food = 1;
-  this.health = this.max_health;
-  this.water = this.max_water;
+  this.age = 0;
+  this.food = this.max_food / 2;
+  this.health = this.max_health / 2;
+  this.water = this.max_water / 2;
 
   this.randomize = function () {
     this.food = get_random_int(1, this.max_food);
     this.health = get_random_int(1, this.max_health);
     this.water = get_random_int(1, this.max_water);
   };
-  this.reproduce = function () {
-    this.food = 2;
-    //spawn sheepling nearby
-  };
-  this.eat = function () {
-    this.food += 1;
-    if (this.food > this.max_food) {
-      alert(this.name + "has eaten too much food");
-    }
-  };
   this.make = function () {
     return new Sheepling();
   };
-  this.about = function () {
-    var string = "";
-    string += "<br>&nbsp&nbsp> type: " + this.name;
-    string += "<br>&nbsp&nbsp> food: " + this.food + "/" + this.max_food;
-    string += "<br>&nbsp&nbsp> health: " + this.health + "/" + this.max_health;
-    string += "<br>&nbsp&nbsp> water: " + this.water + "/" + this.max_water;
-    return string;
-  };
   this.next_phase = function (col, row) {
-    this.food--;
-
-    this.food += count_adjacent_entities(entitiesPrev, col, row, entity_types.sheep);
-
-    //grow up
-    //if well fed
-    if (this.food >= this.max_food) {
-      board.set_entity(col, row, entity_types.sheep);
-      entities[col][row].food = entities[col][row].max_food / 2;
-    }
-    //die
-    if (this.food <= 0) {
-      board.set_entity(col, row, entity_types.noEntity);
-    }
+    this.age++;
+    base_entity.choose_action(this, col, row);
   };
 };
+
+var set_action_types = function() {
+action_types = new Array();
+  action_types.nothing = "nothing";
+  action_types.move = "move";
+  action_types.graze = "graze";
+  action_types.drink = "drink";
+  action_types.suckle = "suckle";
+  action_types.breed = "breed";
+  action_types.evolve = "evolve";
+  action_types.die = "die";
+};
+var set_entity_types2 = function() {
+entity_types2 = new Array();
+  entity_types2.noEntity = NoEntity;
+  entity_types2.sheep = Sheep;
+  entity_types2.wolf = Wolf;
+  entity_types2.sheepling = Sheepling;
+  entity_types2.wolfling = Wolfling;
+};
+
+var Entity = function () {
+  this.about = function (entity) {
+    var space = "<br>&nbsp&nbsp> ";
+    var string = "";
+    if (entity.name) string += space + "type: " + entity.name;
+    if (entity.age) string += space + "age: " + entity.age + " phases";
+    if (entity.last_action) string += space + "last action: " + entity.last_action;
+    if (entity.food) string += space + "food: " + entity.food + "/" + entity.max_food;
+    if (entity.health) string += space + "health: " + entity.health + "/" + entity.max_health;
+    if (entity.water) string += space + "water: " + entity.water + "/" + entity.max_water;
+    return string;
+  };
+  //TODO: implement Cell Factory
+  this.make = function (entity_type) {
+    return new entity_types2[entity_type .name]();
+  };
+  
+  this.choose_action = function (entity, col, row) {
+    var actions = new Array();
+
+    //eat cell
+    //only if hungry and standing on cell
+    if (entity.grazing_type)
+      if (entity.food < entity.max_food)
+        if (check_cell_type(cellsPrev[col][row], entity.grazing_type))
+          actions.push(action_types.graze);
+    
+    //TODO: DRINK
+    //drink cell
+    if (false)
+      actions.push(action_types.drink);
+    
+    //TODO: MOVE
+    //move
+    if (false)
+      actions.push(action_types.move);
+    
+    //suckle
+    //only if parent nearby
+    if (entity.adult)
+      if (entity.food < entity.max_food)
+        if (count_adjacent_entities(entitiesPrev, col, row, entity.adult) > 0)
+          actions.push(action_types.suckle);
+
+    //grow up
+    //only if aged and in good shape
+    if (entity.ling)
+      if (entity.age >= entity.max_age)
+        if (entity.food >= entity.max_food / 2 && 
+          entity.health >= entity.max_health / 2 &&
+          entity.water >= entity.max_water / 2)
+            actions.push(action_types.evolve);
+    
+    //reproduce
+    //only if well fed
+    // TODO: need water and health as well
+    if (entity.spawn && entity.food > entity.max_food / 2) {
+      if (get_adjacent_entities_locations(col, row, entity_types.noEntity).length > 0) {
+        actions.push(action_types.breed);
+      }
+    }
+      
+    //die
+    if (entity.food <= 0)// || entity.water <= 0 || entity.health <= 0)
+      actions.push(action_types.die);
+
+    //TODO: weigh options very carefully
+    var action = get_random_item(actions);
+    if (actions.length === 0)
+      action = action_types.nothing;
+  
+    entity.last_action = action;
+    base_entity.perform_action(entity, action, col, row);
+  }
+  
+  this.perform_action = function (entity, action, col, row) {
+    switch (action) {
+    case action_types.nothing:
+      this.nothing(entity);
+      break;
+    case action_types.move:
+      this.move(entity);
+      break;
+    case action_types.graze:
+      this.graze(entity, col, row);
+      break;
+    case action_types.drink:
+      this.drink(entity);
+      break;
+    case action_types.suckle:
+      this.suckle(entity, col, row);
+      break;
+    case action_types.evolve:
+      this.evolve(entity, col, row);
+      break;
+    case action_types.breed:
+      this.breed(entity, col, row);
+      break;
+    case action_types.die:
+      this.die(entity, col, row);
+      break;
+    }
+  };
+  this.nothing = function (entity) {
+    entity.food--;
+    //TODO: reduce water as well
+  }
+  this.move = function (entity, col, row, new_col, new_row) {
+    move_entity(entity, new_col, new_row);
+    //TODO: fill old slot
+    //TODO: reduce food and water while moving?
+  };
+  this.graze = function (entity, col, row) {
+    entity.food += 1;
+    if (entity.food > entity.max_food)
+      entity.food = entity.max_food;
+    cells[col][row].graze(col, row);
+  };
+  this.drink = function (entity, cell) {
+    entity.water ++;
+    //TODO: drink cell
+  };
+  this.suckle = function (entity, col, row) {
+    entity.food += 1;
+    //TODO: old logic of more parents = faster growth
+    //entity.food += count_adjacent_entities(entitiesPrev, col, row, entity.adult);
+  };
+  this.die = function (entity, col, row) {
+    board.set_entity(col, row, entity_types.noEntity);
+  };
+  this.evolve = function (entity, col, row) {
+    transform_entity(entity, entity.adult, col, row);
+    entities[col][row].food = entities[col][row].max_food / 2;
+  };
+  this.breed = function (entity, col, row) {
+    var location = get_random_item(get_adjacent_entities_locations(col, row, entity_types.noEntity))
+      if (location) {
+        entity.food = entity.max_food / 2;
+        board.set_entity(location.x, location.y, entity.spawn);
+      } else {
+        entity.food = entity.max_food;
+      }
+  };
+};
+
+var transform_entity = function (entity, entity_type, col, row) {
+  var new_entity = entity_type.make();
+
+  if (entity.health) new_entity.health = entity.health;
+  if (entity.food) new_entity.food = entity.food;
+  if (entity.water) new_entity.water = entity.water;
+  if (entity.age) new_entity.age = entity.age;
+  if (entity.last_action) new_entity.last_action = entity.last_action;
+
+  if (col && row)
+    entities[col][row] = new_entity;
+
+  return new_entity;
+};
+
+var move_entity = function (entity, col, row) {
+  entities[col][row] = entity;
+};
+
 var Wolfling = function () {
   this.name = "wolfling";
   this.color = colors.wolfling;
@@ -847,10 +962,13 @@ var Wolfling = function () {
   this.max_health = 4;
   this.max_water = 4;
   this.ling = true;
+  this.adult = entity_types.wolf;
+  this.max_age = 4;
 
-  this.food = 1;
-  this.health = this.max_health;
-  this.water = this.max_water;
+  this.age = 0;
+  this.food = this.max_food / 2;
+  this.health = this.max_health / 2;
+  this.water = this.max_water / 2;
 
   this.randomize = function () {
     this.food = get_random_int(1, this.max_food);
@@ -860,29 +978,9 @@ var Wolfling = function () {
   this.make = function () {
     return new Wolfling();
   };
-  this.about = function () {
-    var string = "";
-    string += "<br>&nbsp&nbsp> type: " + this.name;
-    string += "<br>&nbsp&nbsp> food: " + this.food + "/" + this.max_food;
-    string += "<br>&nbsp&nbsp> health: " + this.health + "/" + this.max_health;
-    string += "<br>&nbsp&nbsp> water: " + this.water + "/" + this.max_water;
-    return string;
-  };
   this.next_phase = function (col, row) {
-    this.food--;
-
-    this.food += count_adjacent_entities(entitiesPrev, col, row, entity_types.wolf);
-
-    //grow up
-    //if well fed
-    if (this.food >= this.max_food) {
-      board.set_entity(col, row, entity_types.wolf);
-      entities[col][row].food = entities[col][row].max_food / 2;
-    }
-    //die
-    if (this.food <= 0) {
-      board.set_entity(col, row, entity_types.noEntity);
-    }
+    this.age++;
+    base_entity.choose_action(this, col, row);
   };
 };
 
@@ -906,10 +1004,16 @@ var Grass = function () {
   this.max_grass = 4;
 
   this.grass = this.max_grass;
+  this.under = cell_types.dirt;
 
   this.make = function () {
     return new Grass();
   }
+  this.graze = function (col, row) {
+    this.grass--;
+    if (this.grass <= 0)
+      board.set_cell(col, row, this.under);
+  };
   this.about = function () {
     var string = "";
     string += "<br>&nbsp&nbsp> type: " + this.name;
@@ -1172,7 +1276,7 @@ var Graph = function (position, size, padding) {
   this.col_width = this.w / 2;
   this.row_height = this.h / 2;
   this.padding = padding;
-  
+
   this.radius = this.row_height / 2;
   if (this.radius > this.col_width / 2)
     this.radius = this.col_width / 2;
@@ -1341,7 +1445,7 @@ var render_console = function (message) {
     if (check_entity_type(entity, entity_types.noEntity))
       message += "<br><br>- no entity";
     else
-      message += "<br><br>- ENTITY INFO: " + entity.about();
+      message += "<br><br>- ENTITY INFO: " + base_entity.about(entity);
 
   } else {
     message += "<br>- move cursor over"
