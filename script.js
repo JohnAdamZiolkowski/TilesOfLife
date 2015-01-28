@@ -1,3 +1,10 @@
+/*
+TilesOfLife
+author: John Adam Ziolkowski
+github: JohnAdamZiolkowski
+email:  johnadamziolkowski@gmail.com
+*/
+
 "use strict";
 
 //region variable declarations
