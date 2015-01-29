@@ -81,7 +81,7 @@ var get_adjacent_entities_locations = function (col, row, entity_type) {
 //new entity has the same properties as the original
 //places the new entity in the location
 //returns the new entity
-var transform_entity = function (entity, entity_type, col, row) {
+var transform_entity = function (entity, entity_type) {
   var new_entity = entity_type.make();
 
   if (entity.health) new_entity.health = entity.health;
@@ -90,15 +90,19 @@ var transform_entity = function (entity, entity_type, col, row) {
   if (entity.age) new_entity.age = entity.age;
   if (entity.last_action) new_entity.last_action = entity.last_action;
 
+  var col = entity.col;
+  var row = entity.row;
   entities[col][row] = new_entity;
+  base_entity.set_location(new_entity, col, row);
 
   return new_entity;
 }; // end transform_entity
 
 //takes an entity and a location
 //places the entity in the new location
-var move_entity = function (entity, col, row) {
-  entities[col][row] = entity;
+var move_entity = function (entity, new_col, new_row) {
+  entities[new_col][new_row] = entity;
+  base_entity.set_location(entity, new_col, new_row);
 }; // end move_entity
 
 //takes a grid of cells, a location, and a cell type

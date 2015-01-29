@@ -39,6 +39,20 @@ var Board = function (position, size, grid, depth, line_width) {
           this.y + this.row_height * row + this.line_width,
           this.col_width - this.line_width,
           this.row_height - this.line_width);
+        
+        if (check_cell_type(cell, cell_types.grass)) {
+          if (cell.grass <= cell.max_grass / 2) {
+              c.fillStyle = cell.under.color.string;
+              c.beginPath();
+              c.moveTo(this.x + this.col_width * col + this.line_width + this.col_width / 2, this.y + this.row_height * row + this.line_width);
+              c.lineTo(this.x + this.col_width * col + this.line_width, this.y + this.row_height * row + this.line_width + this.row_height / 2);
+              c.lineTo(this.x + this.col_width * col + this.line_width + this.col_width / 2, this.y + this.row_height * row + this.line_width + this.row_height);
+              c.lineTo(this.x + this.col_width * col + this.line_width + this.col_width, this.y + this.row_height * row + this.line_width + this.row_height / 2);
+              c.fill();
+            }
+      }
+            
+        
         if (check_cell_type(cell, cell_types.water)) {
           if (row > 0) {
             var cell_above = cells[col][row - 1];
@@ -177,6 +191,10 @@ var Board = function (position, size, grid, depth, line_width) {
 
           //ground shadow first
           c.fillStyle = cell.color.darken().string;
+          
+          if (check_cell_type(cell, cell_types.grass))
+            if (cell.grass <= cell.max_grass / 2)
+                c.fillStyle = cell.under.color.darken().string;
           c.save();
           var scale_x = 1.5;
           var scale_y = 0.5;
@@ -311,6 +329,7 @@ var Board = function (position, size, grid, depth, line_width) {
   };
   this.set_entity = function (col, row, entity_type) {
     entities[col][row] = base_entity.make(entity_type);
+    base_entity.set_location(entities[col][row], col, row);
   };
   
   //takes cell type
@@ -329,6 +348,7 @@ var Board = function (position, size, grid, depth, line_width) {
     for (var row = 0; row < this.rows; row++) {
       for (var col = 0; col < this.cols; col++) {
         entities[col][row] = entity_type.make();
+        base_entity.set_location(entities[col][row], col, row);
       }
     }
   }; // end fill_entities

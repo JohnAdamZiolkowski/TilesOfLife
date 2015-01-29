@@ -94,6 +94,7 @@ var Controller = function () {
     if (this.keysDown.hasOwnProperty(13) && !this.entering) {
       this.entering = true;
       board.next_phase();
+      ticks = 0;
     }
     if (this.keysUp.hasOwnProperty(13) && this.entering) {
       this.entering = false;
