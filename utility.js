@@ -101,6 +101,10 @@ var transform_entity = function (entity, entity_type) {
   if (entity.age) new_entity.age = entity.age;
   if (entity.last_action) new_entity.last_action = entity.last_action;
 
+  if (entity.max_health) new_entity.max_health = entity.max_health;
+  if (entity.max_food) new_entity.max_food = entity.max_food;
+  if (entity.max_water) new_entity.max_water = entity.max_water;
+
   var col = entity.col;
   var row = entity.row;
   entities[col][row] = new_entity;

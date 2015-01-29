@@ -253,7 +253,7 @@ var Board = function (position, size, grid, depth, line_width) {
             bobbing_offset = get_propper_sine(amp, freq, col, row) / 2 + amp / 2;
           var scale = 1;
           if (entity.ling)
-            scale = 0.75;
+            scale = 0.66;
           
           
           var shadow_x = this.x + this.col_width * col + this.col_width / 2 + this.line_width / 2;

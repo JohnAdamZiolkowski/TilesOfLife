@@ -79,6 +79,8 @@ var set_colors = function () {
   colors.sheepling = new Color(200, 150, 150);
   colors.wolf = new Color(90, 45, 45);
   colors.wolfling = new Color(120, 60, 60);
+  colors.corpse = new Color(50, 60, 20);
+  colors.corpseling = new Color(65, 80, 30);
 }; // end set_colors
 
 var set_cell_types = function () {
@@ -99,16 +101,20 @@ var set_entity_types = function () {
   entity_types = new Array();
   entity_types.push(new NoEntity());
   entity_types.push(new Sheep());
-  entity_types.push(new Wolf());
   entity_types.push(new Sheepling());
+  entity_types.push(new Wolf());
   entity_types.push(new Wolfling());
+  entity_types.push(new Corpse());
+  entity_types.push(new Corpseling());
 
   var i = 0;
   entity_types.noEntity = entity_types[i++];
   entity_types.sheep = entity_types[i++];
-  entity_types.wolf = entity_types[i++];
   entity_types.sheepling = entity_types[i++];
+  entity_types.wolf = entity_types[i++];
   entity_types.wolfling = entity_types[i++];
+  entity_types.corpse = entity_types[i++];
+  entity_types.corpseling = entity_types[i++];
 }; // end set_entity_types
 
 var set_action_types = function () {
@@ -121,15 +127,18 @@ var set_action_types = function () {
   action_types.breed = "breed";
   action_types.evolve = "evolve";
   action_types.die = "die";
+  action_types.rot = "rot";
 };
 
 var set_entity_types2 = function () {
   entity_types2 = new Array();
   entity_types2.noEntity = NoEntity;
   entity_types2.sheep = Sheep;
-  entity_types2.wolf = Wolf;
   entity_types2.sheepling = Sheepling;
+  entity_types2.wolf = Wolf;
   entity_types2.wolfling = Wolfling;
+  entity_types2.corpse = Corpse;
+  entity_types2.corpseling = Corpseling;
 };
 
 var update = function () {

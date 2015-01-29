@@ -11,12 +11,12 @@ var Entity = function () {
   this.about = function (entity) {
     var space = "<br>&nbsp&nbsp> ";
     var string = "";
-    if (entity.name) string += space + "type: " + entity.name;
-    if (entity.age) string += space + "age: " + entity.age + " phases";
-    if (entity.last_action) string += space + "last action: " + entity.last_action;
-    if (entity.food) string += space + "food: " + entity.food + "/" + entity.max_food;
-    if (entity.health) string += space + "health: " + entity.health + "/" + entity.max_health;
-    if (entity.water) string += space + "water: " + entity.water + "/" + entity.max_water;
+    if (typeof(entity.name) != "undefined") string += space + "type: " + entity.name;
+    if (typeof(entity.age) != "undefined") string += space + "age: " + entity.age + " phases";
+    if (typeof(entity.last_action) != "undefined") string += space + "last action: " + entity.last_action;
+    if (typeof(entity.food) != "undefined") string += space + "food: " + entity.food + "/" + entity.max_food;
+    if (typeof(entity.health) != "undefined") string += space + "health: " + entity.health + "/" + entity.max_health;
+    if (typeof(entity.water) != "undefined") string += space + "water: " + entity.water + "/" + entity.max_water;
     return string;
   };
   //TODO: implement Cell Factory
@@ -86,12 +86,16 @@ var Entity = function () {
     //TODO: let lack of water and health also cause death
     if (entity.food <= 0) // || entity.water <= 0 || entity.health <= 0)
       actions.push(action_types.die);
-
+    
     //TODO: weigh options very carefully
     var action = get_random_item(actions);
     if (actions.length === 0)
       action = action_types.nothing;
-
+    
+    if (check_entity_type(entity, entity_types.corpse) ||
+        check_entity_type(entity, entity_types.corpseling))
+      action = action_types.rot;
+    
     entity.last_action = action;
     base_entity.perform_action(entity, action);
   }
@@ -122,11 +126,29 @@ var Entity = function () {
     case action_types.die:
       this.die(entity);
       break;
+    case action_types.rot:
+      this.rot(entity);
+      break;
     }
   };
   this.nothing = function (entity) {
     entity.food--;
     //TODO: reduce water as well
+  }
+  this.rot = function (entity) {
+    if (entity.food > 0)
+      entity.food--;
+    if (entity.water > 0)
+    entity.water--;
+    if (entity.health > 0)
+    entity.health--;
+    
+    if (entity.food === 0 &&
+       entity.water === 0 &&
+       entity.health === 0)
+      this.delete(entity)
+      
+    //TODO: update anything?
   }
   this.move = function (entity, new_col, new_row) {
     move_entity(entity, new_col, new_row);
@@ -149,6 +171,12 @@ var Entity = function () {
     //entity.food += count_adjacent_entities(entitiesPrev, col, row, entity.adult);
   };
   this.die = function (entity) {
+    if (entity.ling)
+      transform_entity(entity, entity_types.corpseling);
+    else 
+      transform_entity(entity, entity_types.corpse);
+  };
+  this.delete = function (entity) {
     board.set_entity(entity.col, entity.row, entity_types.noEntity);
   };
   this.evolve = function (entity) {
@@ -163,110 +191,5 @@ var Entity = function () {
     } else {
       entity.food = entity.max_food;
     }
-  };
-};
-
-var NoEntity = function () {
-  this.name = "noEntity";
-  this.color = colors.cursor;
-  this.make = function () {
-    return new NoEntity();
-  };
-};
-
-var Sheep = function () {
-  this.name = "sheep";
-  this.color = colors.sheep;
-
-  this.max_food = 4;
-  this.max_health = 4;
-  this.max_water = 4;
-  this.spawn = entity_types.sheepling;
-  this.grazing_type = cell_types.grass;
-
-  this.age = 0;
-  this.food = this.max_food / 2;
-  this.health = this.max_health / 2;
-  this.water = this.max_water / 2;
-
-  this.make = function () {
-    return new Sheep();
-  }
-  this.next_phase = function () {
-    this.age++;
-    base_entity.choose_action(this);
-  };
-};
-
-var Wolf = function () {
-  this.name = "wolf";
-  this.color = colors.wolf;
-
-  this.max_food = 4;
-  this.max_health = 4;
-  this.max_water = 4;
-
-  this.age = 0;
-  this.food = this.max_food / 2;
-  this.health = this.max_health / 2;
-  this.water = this.max_water / 2;
-  this.spawn = entity_types.wolfling;
-
-  this.make = function () {
-    return new Wolf();
-  };
-  this.next_phase = function () {
-    this.age++;
-    base_entity.choose_action(this);
-  }
-};
-
-var Sheepling = function () {
-  this.name = "sheepling";
-  this.color = colors.sheepling;
-
-  this.max_food = 4;
-  this.max_health = 4;
-  this.max_water = 4;
-  this.ling = true;
-  this.adult = entity_types.sheep;
-  this.max_age = 4;
-
-  this.age = 0;
-  this.food = this.max_food / 2;
-  this.health = this.max_health / 2;
-  this.water = this.max_water / 2;
-
-  this.make = function () {
-    return new Sheepling();
-  };
-  this.next_phase = function () {
-    this.age++;
-    base_entity.choose_action(this);
-  };
-};
-
-var Wolfling = function () {
-  this.name = "wolfling";
-  this.color = colors.wolfling;
-
-  this.max_food = 4;
-  this.max_health = 4;
-  this.max_water = 4;
-  this.ling = true;
-  this.adult = entity_types.wolf;
-  this.max_age = 4;
-
-  this.age = 0;
-  this.food = this.max_food / 2;
-  this.health = this.max_health / 2;
-  this.water = this.max_water / 2;
-
-  this.make = function () {
-    return new Wolfling();
-  };
-  this.next_phase = function () {
-    this.age++;
-    base_entity.choose_action(this);
   };
 };
