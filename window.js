@@ -12,6 +12,7 @@ window.onload = function () {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   c = canvas.getContext('2d');
+  controller = new Controller();
   init();
   doLoop();
 };

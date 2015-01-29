@@ -31,6 +31,7 @@ var Controller = function () {
   this.keysUp = {};
 
   this.update = function () {
+    
     var cursor_direction = new Point(0, 0);
 
     //right
@@ -76,10 +77,6 @@ var Controller = function () {
         }
       }
     }
-    //backspace
-    if (this.keysDown.hasOwnProperty(8)) {
-      init();
-    }
     //tab
     if (this.keysDown.hasOwnProperty(9) && !this.tabbing) {
       this.tabbing = true;
@@ -106,5 +103,10 @@ var Controller = function () {
 
     this.keysDownPrev = this.keysDown;
     this.keysUpPrev = this.keysUp;
+    
+    //backspace
+    if (this.keysDown.hasOwnProperty(8)) {
+      init();
+    }
   }; //end update_keys
 };

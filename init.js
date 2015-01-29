@@ -22,7 +22,7 @@ var init = function () {
   set_entity_types2();
   set_action_types();
   set_defaults();
-
+  
   base_entity = new Entity();
 
   board = new Board(board_position, board_size, board_grid,
@@ -36,7 +36,6 @@ var init = function () {
   populations.push(new Population(cells, entities));
   graph = new Graph(graph_position, graph_size, graph_padding);
   console = new Console();
-  controller = new Controller();
 }; // end init
 
 var set_defaults = function () {
@@ -149,7 +148,7 @@ var render = function () {
 }; // end render
 
 var doLoop = function () {
-  //update();
+  update();
   render();
   requestAnimFrame(doLoop);
 }; // end doLoop
