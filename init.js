@@ -8,6 +8,10 @@ email:  johnadamziolkowski@gmail.com
 "use strict";
 
 var init = function () {
+  canvas = document.getElementById('world');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  c = canvas.getContext('2d');
 
   phase = 0;
   ticks = 0;
@@ -145,7 +149,7 @@ var render = function () {
 }; // end render
 
 var doLoop = function () {
-  update();
+  //update();
   render();
   requestAnimFrame(doLoop);
 }; // end doLoop
