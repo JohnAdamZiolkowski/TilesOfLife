@@ -7,36 +7,6 @@ email:  johnadamziolkowski@gmail.com
 
 "use strict";
 
-var Sheepling = function () {
-  this.name = "sheepling";
-  this.color = colors.sheepling;
-
-  this.max_food = 4;
-  this.max_health = 4;
-  this.max_water = 4;
-  this.ling = true;
-  this.adult = entity_types.sheep;
-  this.max_age = 4;
-
-  this.age = 0;
-  this.food = this.max_food / 2;
-  this.health = this.max_health / 2;
-  this.water = this.max_water / 2;
-
-  this.randomize = function () {
-    this.food = get_random_int(1, this.max_food);
-    this.health = get_random_int(1, this.max_health);
-    this.water = get_random_int(1, this.max_water);
-  };
-  this.make = function () {
-    return new Sheepling();
-  };
-  this.next_phase = function (col, row) {
-    this.age++;
-    base_entity.choose_action(this, col, row);
-  };
-};
-
 var Entity = function () {
   this.about = function (entity) {
     var space = "<br>&nbsp&nbsp> ";
@@ -52,6 +22,14 @@ var Entity = function () {
   //TODO: implement Cell Factory
   this.make = function (entity_type) {
     return new entity_types2[entity_type.name]();
+  };
+
+  this.randomize = function (entity) {
+    if (entity.age) entity.age = get_random_int(0, entity.max_age);
+    //if (entity.last_action); //TODO: implement random last action
+    if (entity.food) entity.food = get_random_int(1, entity.max_food);
+    if (entity.health) entity.health = get_random_int(1, entity.max_health);
+    if (entity.water) entity.food = get_random_int(1, entity.max_water);
   };
 
   this.choose_action = function (entity, col, row) {
@@ -190,6 +168,7 @@ var NoEntity = function () {
     return new NoEntity();
   };
 };
+
 var Sheep = function () {
   this.name = "sheep";
   this.color = colors.sheep;
@@ -205,11 +184,6 @@ var Sheep = function () {
   this.health = this.max_health / 2;
   this.water = this.max_water / 2;
 
-  this.randomize = function () {
-    this.food = get_random_int(1, this.max_food);
-    this.health = get_random_int(1, this.max_health);
-    this.water = get_random_int(1, this.max_water);
-  };
   this.make = function () {
     return new Sheep();
   }
@@ -218,6 +192,7 @@ var Sheep = function () {
     base_entity.choose_action(this, col, row);
   };
 };
+
 var Wolf = function () {
   this.name = "wolf";
   this.color = colors.wolf;
@@ -232,11 +207,6 @@ var Wolf = function () {
   this.water = this.max_water / 2;
   this.spawn = entity_types.wolfling;
 
-  this.randomize = function () {
-    this.food = get_random_int(1, this.max_food);
-    this.health = get_random_int(1, this.max_health);
-    this.water = get_random_int(1, this.max_water);
-  };
   this.make = function () {
     return new Wolf();
   };
@@ -244,9 +214,32 @@ var Wolf = function () {
     this.age++;
     base_entity.choose_action(this, col, row);
   }
-
 };
 
+var Sheepling = function () {
+  this.name = "sheepling";
+  this.color = colors.sheepling;
+
+  this.max_food = 4;
+  this.max_health = 4;
+  this.max_water = 4;
+  this.ling = true;
+  this.adult = entity_types.sheep;
+  this.max_age = 4;
+
+  this.age = 0;
+  this.food = this.max_food / 2;
+  this.health = this.max_health / 2;
+  this.water = this.max_water / 2;
+
+  this.make = function () {
+    return new Sheepling();
+  };
+  this.next_phase = function (col, row) {
+    this.age++;
+    base_entity.choose_action(this, col, row);
+  };
+};
 
 var Wolfling = function () {
   this.name = "wolfling";
@@ -264,11 +257,6 @@ var Wolfling = function () {
   this.health = this.max_health / 2;
   this.water = this.max_water / 2;
 
-  this.randomize = function () {
-    this.food = get_random_int(1, this.max_food);
-    this.health = get_random_int(1, this.max_health);
-    this.water = get_random_int(1, this.max_water);
-  };
   this.make = function () {
     return new Wolfling();
   };

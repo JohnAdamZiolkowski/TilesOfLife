@@ -23,6 +23,14 @@ var get_random_int = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }; // end get_random_int
 
+//takes pass and max numbers
+//returns if random roll met passing value or higher
+//example: (1, 5) has a 20% chance of returning true
+//TODO: Test this function out before using it
+var get_roll = function (pass, max) {
+  return (Math.floor(Math.random() * (max + 1)) >= pass);
+}; // end get_random_int
+
 //takes an array
 //returns a random item from the array
 //if the array has no items, return false
@@ -38,6 +46,12 @@ var get_random_item = function (array) {
 var check_cell_type = function (cell, cell_type) {
   return cell.name == cell_type.name;
 }; // end check_cell_type
+
+//takes an entity and an entity type
+//returns whether the types match
+var check_entity_type = function (entity, entity_type) {
+  return entity.name == entity_type.name;
+}; // end check_entity_type
 
 //takes a location and an entity type
 //returns a list of adjacent locations that match the type
@@ -62,7 +76,11 @@ var get_adjacent_entities_locations = function (col, row, entity_type) {
   return locations;
 }; // end get_adjacent_entities_locations
 
-
+//takes an entity, an entity type, and a location
+//creates a new entity with given type
+//new entity has the same properties as the original
+//places the new entity in the location
+//returns the new entity
 var transform_entity = function (entity, entity_type, col, row) {
   var new_entity = entity_type.make();
 
@@ -75,14 +93,17 @@ var transform_entity = function (entity, entity_type, col, row) {
   entities[col][row] = new_entity;
 
   return new_entity;
-};
+}; // end transform_entity
 
+//takes an entity and a location
+//places the entity in the new location
 var move_entity = function (entity, col, row) {
   entities[col][row] = entity;
-};
+}; // end move_entity
 
-
-
+//takes a grid of cells, a location, and a cell type
+//counts how many of the adjacent cells have a matching type
+//returns the count
 var count_adjacent_cells = function (cells, col, row, cell_type) {
   var count = 0;
   if (col > 0)
@@ -100,7 +121,9 @@ var count_adjacent_cells = function (cells, col, row, cell_type) {
   return count;
 }; // end count_adjacent_cells
 
-
+//takes a grid of entities, a location, and an entity type
+//counts how many of the adjacent entities have a matching type
+//returns the count
 var count_adjacent_entities = function (entities, col, row, entity_type) {
   var count = 0;
   if (col > 0)
@@ -119,10 +142,8 @@ var count_adjacent_entities = function (entities, col, row, entity_type) {
   return count;
 }; // end count_adjacent_entities 
 
-var check_entity_type = function (entity, entity_type) {
-  return entity.name == entity_type.name;
-};
-
+//initializes the cells grid
+//uses completely random distribution
 var generate_cells = function () {
   cells = new Array(board.cols);
   for (var col = 0; col < board.cols; col++) {
@@ -133,19 +154,26 @@ var generate_cells = function () {
   }
 }; // end generate_cells
 
+//initializes the entities grid
+//sets all entities to noEntity first
 var generate_entities = function () {
   entities = new Array(board.cols);
   for (var col = 0; col < board.cols; col++) {
     entities[col] = new Array(board.rows);
     for (var row = 0; row < board.rows; row++) {
       board.set_entity(col, row, entity_types.noEntity);
-      if (get_random_int(0, entity_types.length - 2) === 0)
+      //TODO: remember how the distribution works
+      if (get_random_int(0, entity_types.length - 2) === 0) {
+        //gets a random entity type, skipping noEnity
         board.set_entity(col, row, entity_types[get_random_int(1, entity_types.length - 1)]);
+        base_entity.randomize(entities[col][row]);
+      }
     }
   }
 }; // end generate_entities
 
-
+//takes a grid of cells and a cell type
+//returns how many cells match the type
 var count_cells_by_type = function (cells, cell_type) {
   var count = 0;
 
@@ -155,8 +183,10 @@ var count_cells_by_type = function (cells, cell_type) {
         count++;
 
   return count;
-};
+}; // end count_cells_by_type 
 
+//takes a grid of entities and an entity type
+//returns how many entities match the type
 var count_entities_by_type = function (entities, entity_type) {
   var count = 0;
 
@@ -166,14 +196,21 @@ var count_entities_by_type = function (entities, entity_type) {
         count++;
 
   return count;
-};
+}; // end count_entities_by_type
 
 
-
+//takes a location
+//uses the bobbing degree and the board depth to draw entity floating in water
+//returns a height offset
 var get_bobbing_offset = function (col, row) {
   return board.depth / 2.5 * get_bobbing_degree(col, row);
-}
+};
+
+//takes a location
+//uses time and position to get an angle to draw entity floating in water
+//returns the angle
 var get_bobbing_degree = function (col, row) {
   return Math.sin((ticks + col * board.cols + row * board.rows) / 100 * Math.PI * 2);
+  //ignore board location:
   //return Math.sin((ticks) / 100 * Math.PI * 2);
-}
+}; // end get_bobbing_degree

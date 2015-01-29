@@ -27,6 +27,7 @@ var Board = function (position, size, grid, depth, line_width) {
     this.draw_entities(c);
   };
 
+  //draws every cell on the grid
   this.draw_cells = function (c) {
     for (var row = 0; row < this.rows; row++) {
       for (var col = 0; col < this.cols; col++) {
@@ -73,6 +74,8 @@ var Board = function (position, size, grid, depth, line_width) {
     }
   }; // end Board.draw_cells
 
+  //draws every cell's outlines on the grid
+  //TODO: change fillRect to use line stroke
   this.draw_cell_lines = function (c) {
     //outline cells
     for (var row = 0; row < this.rows; row++) {
@@ -158,6 +161,7 @@ var Board = function (position, size, grid, depth, line_width) {
     }
   }; // end Board.draw_cell_lines
 
+  //draws every entity and its outlines
   this.draw_entities = function (c) {
     for (var row = 0; row < this.rows; row++) {
       for (var col = 0; col < this.cols; col++) {
@@ -205,7 +209,7 @@ var Board = function (position, size, grid, depth, line_width) {
             2 * Math.PI);
           c.stroke();
 
-
+          //cover the bottom portion of the entity with water
           if (check_cell_type(cell, cell_types.water)) {
             var bobbing_degree = get_bobbing_degree(col, row);
 
@@ -225,11 +229,13 @@ var Board = function (position, size, grid, depth, line_width) {
           }
         }
       }
-    } // end Board.draw_entities
-  };
+    }
+  };// end Board.draw_entities
 
   this.next_phase = function () {
     phase++;
+    
+    //record current board to combat update order bias
     cellsPrev = JSON.parse(JSON.stringify(cells));
     entitiesPrev = JSON.parse(JSON.stringify(entities));
 
@@ -243,14 +249,16 @@ var Board = function (position, size, grid, depth, line_width) {
           entity.next_phase(col, row);
       }
     }
-
+    
+    //record the history of cells and entities
+    //deletes the old history to save memory
     populations.push(new Population(cells, entities));
     while (populations.length > populations_length)
       populations.shift();
   };
 
-  //takes point on canvas
-  //returns cell on grid 
+  //takes position on canvas
+  //returns location on grid 
   this.target = function (x, y) {
     var return_col;
     var return_row;
@@ -272,10 +280,10 @@ var Board = function (position, size, grid, depth, line_width) {
 
     var return_point = new Point(return_col, return_row);
     return return_point;
-  };
+  }; // end target
 
-  //takes column and row on board
-  //returns center of cell
+  //takes location on board
+  //returns position of th center of the cell
   this.draw_point = function (col, row) {
     var return_x;
     var return_y;
@@ -296,7 +304,7 @@ var Board = function (position, size, grid, depth, line_width) {
 
     var return_point = new Point(return_x, return_y);
     return return_point;
-  };
+  }; // end draw_point
 
   this.set_cell = function (col, row, cell_type) {
     cells[col][row] = cell_type.make();
@@ -304,18 +312,25 @@ var Board = function (position, size, grid, depth, line_width) {
   this.set_entity = function (col, row, entity_type) {
     entities[col][row] = base_entity.make(entity_type);
   };
+  
+  //takes cell type
+  //sets every cell in the grid to the given type
   this.fill_cells = function (cell_type) {
     for (var row = 0; row < this.rows; row++) {
       for (var col = 0; col < this.cols; col++) {
         cells[col][row] = cell_type.make();
       }
     }
-  };
+  }; // end fill_cells
+  
+  //takes entity type
+  //sets every entity in the grid to the given type
   this.fill_entities = function (entity_type) {
     for (var row = 0; row < this.rows; row++) {
       for (var col = 0; col < this.cols; col++) {
         entities[col][row] = entity_type.make();
       }
     }
-  };
+  }; // end fill_entities
+  
 }; // end Board

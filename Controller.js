@@ -93,12 +93,10 @@ var Controller = function () {
     //enter
     if (this.keysDown.hasOwnProperty(13) && !this.entering) {
       this.entering = true;
-      //message = "ENTER DOWN"
       board.next_phase();
     }
     if (this.keysUp.hasOwnProperty(13) && this.entering) {
       this.entering = false;
-      //message = "ENTER LIFT"
     }
 
     this.keysDownPrev = this.keysDown;
@@ -108,5 +106,5 @@ var Controller = function () {
     if (this.keysDown.hasOwnProperty(8)) {
       init();
     }
-  }; //end update_keys
+  }; //end update
 };
