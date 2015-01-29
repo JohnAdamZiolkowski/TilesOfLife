@@ -20,16 +20,18 @@ var Cursor = function (position, size, speed) {
   this.color = cell_types[0].color;
   this.name = cell_types[0].name;
 
-  this.move = function (direction) {
+  this.move = function (direction, time_passed_since_last_frame) {
     //direction can be any distance from (-2,-2) to (+2,+2)
+    
+    
     direction.x /= 2;
     direction.y /= 2;
 
     var distance = new Point(direction.x * this.speed,
       direction.y * this.speed);
 
-    this.x += distance.x;
-    this.y += distance.y;
+    this.x += distance.x * time_passed_since_last_frame / 1000;
+    this.y += distance.y * time_passed_since_last_frame / 1000;
 
     this.contain();
   };

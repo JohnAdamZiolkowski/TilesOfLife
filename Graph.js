@@ -16,9 +16,7 @@ var Graph = function (position, size, padding) {
   this.row_height = this.h / 2;
   this.padding = padding;
 
-  this.radius = this.row_height / 2;
-  if (this.radius > this.col_width / 2)
-    this.radius = this.col_width / 2;
+  this.radius = get_radius(this.col_width, this.row_height);
 
   this.render = function (c) {
 

@@ -14,7 +14,6 @@ var init = function () {
   c = canvas.getContext('2d');
 
   phase = 0;
-  ticks = 0;
 
   set_colors();
   set_cell_types();
@@ -25,7 +24,9 @@ var init = function () {
   
   base_entity = new Entity();
 
-  board = new Board(board_position, board_size, board_grid,
+  //board = new Board(board_position, board_size, board_grid,
+  //  board_depth, line_width);
+  board = new Board(board_position, board_size,  new Point(get_random_int(1, 16), get_random_int(1, 16)),
     board_depth, line_width);
 
   generate_cells();
@@ -36,20 +37,24 @@ var init = function () {
   populations.push(new Population(cells, entities));
   graph = new Graph(graph_position, graph_size, graph_padding);
   console = new Console();
+  
+  date_started = new Date().getTime();
+  date_last_frame = date_started;
+  date_last_phase = date_started;
 }; // end init
 
 var set_defaults = function () {
-  ticks_per_phase = 100;
+  time_per_phase = 1000;
 
   board_position = new Point(240, 100);
   board_size = new Point(400, 400);
-  board_grid = new Point(8, 16);
+  board_grid = new Point(8, 8);
   board_depth = 0.33;
   line_width = 2;
 
   cursor_position = new Point(340, 50);
   cursor_size = new Point(50, 50);
-  cursor_speed = 10;
+  cursor_speed = 1000;
 
   populations_length = 32;
   graph_position = new Point(450, 650);
@@ -128,12 +133,28 @@ var set_entity_types2 = function () {
 };
 
 var update = function () {
-  ticks++;
-  if (ticks >= ticks_per_phase) {
-    ticks = 0;
+  var date_this_frame = (new Date().getTime());
+  var time_passed_since_last_frame = date_this_frame - date_last_frame;
+  var time_passed_since_last_phase = date_this_frame - date_last_phase;
+  
+//  console.override = "";
+//  console.override += "<br>ms since last frame: "+time_passed_since_last_frame;
+//  console.override += "<br>frames per ms: "+(time_passed_since_last_frame / 1000).toFixed(2);
+//  
+//  console.override += "<br>planned frames per second: "+60;
+//  console.override += "<br>frames per second: "+(1 /(time_passed_since_last_frame / 1000)).toFixed(0);
+//  
+//  console.override += "<br>ms since last phase: "+time_passed_since_last_phase;
+//  console.override += "<br>planned ms per phase: "+time_per_phase;
+  
+  if (time_passed_since_last_phase >= time_per_phase) {
+    date_last_phase = date_this_frame;
+    date_last_frame = date_this_frame;
     board.next_phase();
   }
-  controller.update();
+  controller.update(time_passed_since_last_frame);
+  
+  date_last_frame = date_this_frame;
 }; //end update
 
 var render = function () {

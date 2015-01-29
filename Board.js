@@ -29,6 +29,9 @@ var Board = function (position, size, grid, depth, line_width) {
 
   //draws every cell on the grid
   this.draw_cells = function (c) {
+    var radius = get_radius(this.col_width, this.row_height) * 0.75;
+    var offset = 0;
+    
     for (var row = 0; row < this.rows; row++) {
       for (var col = 0; col < this.cols; col++) {
         var cell = cells[col][row];
@@ -52,24 +55,42 @@ var Board = function (position, size, grid, depth, line_width) {
             }
       }
             
-        
+        //draws the front half of the cell above if transparent
         if (check_cell_type(cell, cell_types.water)) {
           if (row > 0) {
             var cell_above = cells[col][row - 1];
             if (!check_cell_type(cell_above, cell_types.water)) {
               //draw cell above's front side
+               var amp = radius / 2;
+              var freq = 0.5;
+              var sine = get_propper_sine(amp, freq, col, row);
+              
+              offset = sine / 2 + amp / 2;
+              
+              
               c.fillStyle = mix_colors(cell.color, cell_above.color.darken()).string;
+              //c.fillStyle = colors.cursor.string;
               c.fillRect(
                 this.x + this.col_width * col + this.line_width,
                 this.y + this.row_height * row + this.line_width,
                 this.col_width - this.line_width,
                 this.depth - this.line_width);
+              
+              c.fillStyle = cell_above.color.darken().string;
+              //c.fillStyle = colors.cursor.string;
+              c.fillRect(
+                this.x + this.col_width * col + this.line_width,
+                this.y + this.row_height * row + this.line_width,
+                this.col_width - this.line_width,
+                offset);
 
               //draw cell above's front line
               c.fillStyle = mix_colors(cell.color, cell_above.color.darken().darken()).string;
+              
+              //c.fillStyle = colors.cursor.string;
               c.fillRect(
                 this.x + this.col_width * col + this.line_width,
-                this.y + this.row_height * row + this.depth,
+                this.y + this.row_height * row + offset,
                 this.col_width - this.line_width,
                 this.line_width);
             }
@@ -97,16 +118,49 @@ var Board = function (position, size, grid, depth, line_width) {
         var cell = cells[col][row];
         c.fillStyle = cell.color.darken().string;
 
+        var radius = get_radius(this.col_width, this.row_height) * 0.75;
+        
+        var offset = 0;
+        
         //top
         if (row > 0) {
           var cell_above = cells[col][row - 1];
           if (cell.name != cell_above.name) {
             c.fillStyle = mix_colors(cell.color, cell_above.color).darken().string;
+          } else if (check_cell_type(cell_above, cell_types.water)) {
+            
+            //TODO: figure out the purpose of this call:    
+//            c.fillRect(
+//              this.x + this.col_width * col + this.line_width,
+//              this.y + this.row_height * row + offset,
+//              this.col_width - this.line_width,
+//              this.line_width);       
+            //}
           }
         }
+        
+        if (row > 0)
+          if (check_cell_type(cell, cell_types.water))
+            if (check_cell_type(cell_above, cell_types.water)) {
+              
+              var amp = radius / 2;
+              var freq = 0.5;
+              var sine = get_propper_sine(amp, freq, col, row);
+              offset = sine / 2 + amp / 2;
+            
+              c.fillStyle = cell.color.string;
+              c.fillRect(
+                this.x + this.col_width * col + this.line_width,
+                this.y + this.row_height * row,
+                this.col_width - this.line_width,
+                this.line_width + offset);
+              
+              c.fillStyle = cell.color.darken().string;
+            }
+        
         c.fillRect(
           this.x + this.col_width * col + this.line_width,
-          this.y + this.row_height * row,
+          this.y + this.row_height * row + offset,
           this.col_width - this.line_width,
           this.line_width);
 
@@ -182,13 +236,31 @@ var Board = function (position, size, grid, depth, line_width) {
         var entity = entities[col][row];
         if (!check_entity_type(entity, entity_types.noEntity)) {
           var cell = cells[col][row];
+          //var radius = get_radius(this.col_width, this.row_height);
+          var radius = get_radius(this.col_width, this.row_height) * 0.75;
+          //var radius = get_radius(this.col_width * 0.375, this.row_height);
+          //var radius = this.col_width * 0.375
+                    
+
+          var amp = radius / 2;
+          var freq = 0.5;
+          var sine = get_propper_sine(amp, freq, col, row);
+          var degree = get_bobbing_degree(amp, freq, col, row);
+          
+          
           var bobbing_offset = 0;
           if (check_cell_type(cell, cell_types.water))
-            bobbing_offset = get_bobbing_offset(col, row);
+            bobbing_offset = get_propper_sine(amp, freq, col, row) / 2 + amp / 2;
           var scale = 1;
           if (entity.ling)
             scale = 0.75;
+          
+          
+          var shadow_x = this.x + this.col_width * col + this.col_width / 2 + this.line_width / 2;
+          var shadow_y = this.y + this.row_height * row + this.row_height / 2 + this.line_width / 2 + bobbing_offset * scale;
+          
 
+          
           //ground shadow first
           c.fillStyle = cell.color.darken().string;
           
@@ -196,23 +268,29 @@ var Board = function (position, size, grid, depth, line_width) {
             if (cell.grass <= cell.max_grass / 2)
                 c.fillStyle = cell.under.color.darken().string;
           c.save();
-          var scale_x = 1.5;
+          var scale_x = 1.25;
           var scale_y = 0.5;
           c.scale(scale_x, scale_y);
           c.beginPath();
           c.arc(
-            (this.x + this.col_width * col + this.col_width / 2 + this.line_width) / scale_x, (this.y + this.row_height * row + this.row_height / 1.75 + this.line_width) / scale_y, (this.row_height / 2 - this.line_width) * scale,
-            0,
-            2 * Math.PI);
+                shadow_x / scale_x, 
+                shadow_y / scale_y, 
+                radius * scale, 
+                0, 
+                2 * Math.PI);
           c.restore();
           c.fill();
 
           //entity circle
+          
+          var entity_x = this.x + this.col_width * col + this.col_width / 2 + this.line_width / 2;
+          var entity_y = this.y + this.row_height * row + this.row_height / 2 - radius + (1-scale) * radius + this.line_width / 2;
           c.fillStyle = entity.color.string;
           c.beginPath();
           c.arc(
-            this.x + this.col_width * col + this.col_width / 2 + this.line_width,
-            this.y + this.row_height * row + this.row_height / 4 + this.line_width + bobbing_offset * scale, (this.row_height / 2 - this.line_width) * scale,
+            entity_x,
+            entity_y + bobbing_offset * scale, 
+            radius * scale,
             0,
             2 * Math.PI);
           c.fill();
@@ -221,8 +299,9 @@ var Board = function (position, size, grid, depth, line_width) {
           c.strokeStyle = entity.color.darken().darken().string;
           c.beginPath();
           c.arc(
-            this.x + this.col_width * col + this.col_width / 2 + this.line_width,
-            this.y + this.row_height * row + this.row_height / 4 + this.line_width + bobbing_offset * scale, (this.row_height / 2 - this.line_width) * scale,
+            entity_x,
+            entity_y + bobbing_offset * scale,
+            radius * scale,
             0,
             2 * Math.PI);
           c.stroke();
@@ -231,19 +310,27 @@ var Board = function (position, size, grid, depth, line_width) {
           if (check_cell_type(cell, cell_types.water)) {
             var bobbing_degree = get_bobbing_degree(col, row);
 
-            c.fillStyle = mix_colors(entity.color, colors.water).darken().string;
-            c.beginPath();
-            c.arc(
-              this.x + this.col_width * col + this.col_width / 2 + this.line_width,
-              this.y + this.row_height * row + this.row_height / 4 + this.line_width + bobbing_offset * scale, (this.row_height / 2 - this.line_width) * scale, (0.2 - bobbing_degree / Math.PI / 4) * Math.PI, (0.8 + bobbing_degree / Math.PI / 4) * Math.PI);
-            c.fill();
-
-            c.strokeStyle = mix_colors(entity.color.darken().darken(), colors.water).string;
-            c.beginPath();
-            c.arc(
-              this.x + this.col_width * col + this.col_width / 2 + this.line_width,
-              this.y + this.row_height * row + this.row_height / 4 + this.line_width + bobbing_offset * scale, (this.row_height / 2 - this.line_width) * scale, (0.2 - bobbing_degree / Math.PI / 4) * Math.PI, (0.8 + bobbing_degree / Math.PI / 4) * Math.PI);
-            c.stroke();
+//            c.fillStyle = mix_colors(entity.color, colors.water).darken().string;
+//            c.beginPath();
+//            c.arc(
+//            entity_x,
+//            entity_y + bobbing_offset * scale,
+//              radius * scale, 
+//              (0.2 - degree), 
+//              (0.8 + degree),
+//            c.fill();
+//
+//            console.override = "bobbing degree:" + degree;
+//            
+//            c.strokeStyle = mix_colors(entity.color.darken().darken(), colors.water).string;
+//            c.beginPath();
+//            c.arc(
+//              entity_x,
+//              entity_y + bobbing_offset * scale,
+//              radius * scale, 
+//              (0.2 - degree), 
+//              (0.8 + degree);
+//            c.stroke();
           }
         }
       }

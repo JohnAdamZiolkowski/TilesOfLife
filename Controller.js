@@ -30,7 +30,7 @@ var Controller = function () {
   this.keysDown = {};
   this.keysUp = {};
 
-  this.update = function () {
+  this.update = function (time_passed_since_last_frame) {
     
     var cursor_direction = new Point(0, 0);
 
@@ -58,7 +58,7 @@ var Controller = function () {
       if (this.keysDown.hasOwnProperty(16))
         cursor_direction.y--;
     }
-    cursor.move(cursor_direction);
+    cursor.move(cursor_direction, time_passed_since_last_frame);
 
     //space
     if (this.keysDown.hasOwnProperty(32)) {
@@ -94,7 +94,7 @@ var Controller = function () {
     if (this.keysDown.hasOwnProperty(13) && !this.entering) {
       this.entering = true;
       board.next_phase();
-      ticks = 0;
+      date_last_phase = new Date().getTime();
     }
     if (this.keysUp.hasOwnProperty(13) && this.entering) {
       this.entering = false;

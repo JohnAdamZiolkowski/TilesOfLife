@@ -18,7 +18,9 @@ var action_types;
 var populations;
 var base_entity;
 
-var ticks;
+var date_started;
+var date_last_frame;
+var date_last_phase;
 
 var board_position;
 var board_size;
@@ -32,7 +34,7 @@ var populations_length;
 var graph_position;
 var graph_size;
 var graph_padding;
-var ticks_per_phase;
+var time_per_phase;
 
 var colors;
 

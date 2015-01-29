@@ -10,6 +10,7 @@ email:  johnadamziolkowski@gmail.com
 var Console = function () {
   this.message = "";
   this.element = document.getElementById('console');
+  this.override = "";
 
   this.render = function () {
     //clear console
@@ -43,7 +44,7 @@ var Console = function () {
     this.message += "<br><br>---<br><br>";
 
     this.message += "WORLD INFO";
-    this.message += "<br>- Phase: " + phase + "  (" + Math.floor(ticks / 10) + ")";
+    this.message += "<br>- Phase: " + phase;
 
     this.message += "<br><br>---<br><br>";
 
@@ -71,5 +72,8 @@ var Console = function () {
     }
 
     this.element.innerHTML = this.message;
+    
+    if (this.override)
+      this.element.innerHTML = this.override;
   }
 };

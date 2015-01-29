@@ -29,7 +29,7 @@ var get_random_int = function (min, max) {
 //TODO: Test this function out before using it
 var get_roll = function (pass, max) {
   return (Math.floor(Math.random() * (max + 1)) >= pass);
-}; // end get_random_int
+}; // end get_roll
 
 //takes an array
 //returns a random item from the array
@@ -40,6 +40,17 @@ var get_random_item = function (array) {
   else
     return false;
 }; // end get_random_item
+
+//takes a size of a rectangle
+//used to find the radius of a circle that will fit
+//return half the length of the shortest side
+var get_radius = function (w, h) {
+  var radius = w / 2;
+  if (radius > h / 2)
+    radius = h / 2;
+  return radius;
+}; // end get_random_item
+
 
 //takes a cell and a cell type
 //returns whether the types match
@@ -206,15 +217,34 @@ var count_entities_by_type = function (entities, entity_type) {
 //takes a location
 //uses the bobbing degree and the board depth to draw entity floating in water
 //returns a height offset
-var get_bobbing_offset = function (col, row) {
-  return board.depth / 2.5 * get_bobbing_degree(col, row);
+var get_bobbing_offset = function (col, row, radius) {
+  return radius / 4 * get_bobbing_degree(col, row);
+};
+
+//takes a location
+//uses the depth of the board and the cell height to draw wavy water
+//returns a height offset
+var get_bobbing_cell = function (col, row, depth, row_height) {
+  return row_height * get_bobbing_degree(col, row);
 };
 
 //takes a location
 //uses time and position to get an angle to draw entity floating in water
 //returns the angle
-var get_bobbing_degree = function (col, row) {
-  return Math.sin((ticks + col * board.cols + row * board.rows) / 100 * Math.PI * 2);
+var get_bobbing_degree = function (amp, freq, col, row) {
+  var time = (new Date().getTime() - date_started) / 1000;
+  var offset = amp*(Math.sin(freq*time*2*Math.PI+col+row));
+  var degree = offset * Math.PI * 2;
+  return degree;
   //ignore board location:
   //return Math.sin((ticks) / 100 * Math.PI * 2);
 }; // end get_bobbing_degree
+
+var get_propper_sine = function (amp, freq, col, row) {
+  
+  var time = (new Date().getTime() - date_started) / 1000;
+  var offset = amp*(Math.sin(freq*time*2*Math.PI+col+row));
+  return offset;
+};
+
+
