@@ -22,6 +22,9 @@ var date_started;
 var date_last_frame;
 var date_last_phase;
 
+var fullscreenElement;
+var fullscreenEnabled;
+
 var board_position;
 var board_size;
 var board_grid;
