@@ -38,6 +38,10 @@ var graph_position;
 var graph_size;
 var graph_padding;
 var time_per_phase;
+var menu_position;
+var menu_size;
+var menu_padding;
+var menu_text_size;
 
 var colors;
 
@@ -50,3 +54,7 @@ var phase;
 var graph;
 var console;
 var controller;
+var menu;
+
+var state;
+var states;

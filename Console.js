@@ -12,7 +12,7 @@ var Console = function () {
   this.element = document.getElementById('console');
   this.override = "";
 
-  this.render = function () {
+  this.draw = function () {
     //clear console
     this.message = "";
 

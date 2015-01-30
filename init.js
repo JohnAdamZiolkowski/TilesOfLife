@@ -21,6 +21,7 @@ var init = function () {
   set_entity_types2();
   set_action_types();
   set_defaults();
+  set_states();
   
   base_entity = new Entity();
 
@@ -37,10 +38,13 @@ var init = function () {
   populations.push(new Population(cells, entities));
   graph = new Graph(graph_position, graph_size, graph_padding);
   console = new Console();
+  menu = new Menu(menu_position, menu_size, menu_padding, menu_text_size);
   
   date_started = new Date().getTime();
   date_last_frame = date_started;
   date_last_phase = date_started;
+  
+  state = states.main;
 }; // end init
 
 var set_defaults = function () {
@@ -61,6 +65,11 @@ var set_defaults = function () {
   graph_size = new Point(400, 200);
   //TODO: implement graph_padding
   graph_padding = 25;
+  
+  menu_position = new Point(400, 100);
+  menu_size = new Point(250, 400);
+  menu_padding = 20;
+  menu_text_size = 20;
 }; // end set_defautls
 
 var set_colors = function () {
@@ -81,6 +90,13 @@ var set_colors = function () {
   colors.wolfling = new Color(120, 60, 60);
   colors.corpse = new Color(50, 60, 20);
   colors.corpseling = new Color(65, 80, 30);
+
+  colors.menu_fill_active = new Color(120, 120, 160);
+  colors.menu_outline_active = new Color(255, 255, 255);
+  colors.menu_text_active = new Color(255, 255, 255);
+  colors.menu_fill_idle = new Color(90, 90, 120);
+  colors.menu_outline_idle = new Color(30, 30, 40);
+  colors.menu_text_idle = new Color(120, 120, 160);
 }; // end set_colors
 
 var set_cell_types = function () {
@@ -141,6 +157,17 @@ var set_entity_types2 = function () {
   entity_types2.corpseling = Corpseling;
 };
 
+var set_states = function () {
+  states = new Array();
+  states.main = "game";
+  states.menu = "menu";
+};
+
+var set_state = function (new_state) {
+  state = new_state;
+  consile.override = "";
+};
+
 var update = function () {
   var date_this_frame = (new Date().getTime());
   var time_passed_since_last_frame = date_this_frame - date_last_frame;
@@ -155,30 +182,40 @@ var update = function () {
 //  
 //  console.override += "<br>ms since last phase: "+time_passed_since_last_phase;
 //  console.override += "<br>planned ms per phase: "+time_per_phase;
-  
-  if (time_passed_since_last_phase >= time_per_phase) {
-    date_last_phase = date_this_frame;
-    date_last_frame = date_this_frame;
-    board.next_phase();
+  if (state == states.main){
+    if (time_passed_since_last_phase >= time_per_phase) {
+      date_last_phase = date_this_frame;
+      date_last_frame = date_this_frame;
+      board.next_phase();
+    }
   }
+  else if (state == states.menu) {
+    //TODO: ???
+  }
+  
   controller.update(time_passed_since_last_frame);
   
   date_last_frame = date_this_frame;
 }; //end update
 
-var render = function () {
+var draw = function () {
   //clear canvas
   c.clearRect(0, 0, canvas.width, canvas.height);
 
-  board.draw(c);
-  graph.render(c);
-  cursor.draw(c);
-
-  console.render();
-}; // end render
+  if (state == states.main){
+    board.draw(c);
+    graph.draw(c);
+    cursor.draw(c);
+  }
+  else if (state == states.menu) {
+    menu.draw(c);
+  }
+  
+    console.draw();
+}; // end draw
 
 var doLoop = function () {
   update();
-  render();
+  draw();
   requestAnimFrame(doLoop);
 }; // end doLoop

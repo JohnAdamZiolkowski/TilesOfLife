@@ -18,7 +18,7 @@ var Graph = function (position, size, padding) {
 
   this.radius = get_radius(this.col_width, this.row_height);
 
-  this.render = function (c) {
+  this.draw = function (c) {
 
     var start_angle = 0;
     var end_angle = 0;
