@@ -117,12 +117,20 @@ var Controller = function () {
     //enter
     if (this.keysDown.hasOwnProperty(this.enter) &&
         ! this.keysDownPrev.hasOwnProperty(this.enter)) {
-      state = states.main;
-      date_last_phase = new Date().getTime();
+      
+      menu.select();
       
       //board.next_phase();
       //date_last_phase = new Date().getTime();
     }
+    
+    //backspace();
+    if (this.keysDown.hasOwnProperty(this.backspace) &&
+    ! this.keysDownPrev.hasOwnProperty(this.backspace)) {
+      state = states.main;
+      date_last_phase = new Date().getTime();
+    }
+    
   };
   
   this.update = function (time_passed_since_last_frame) {
@@ -136,4 +144,11 @@ var Controller = function () {
     this.keysUpPrev = JSON.parse(JSON.stringify(this.keysUp));
     
   }; //end update
+  
+  this.click = function () {
+    if (state == states.menu)
+      menu.click();
+    else if (state == states.main)
+      ;//TODO: add click handler to main
+  };
 };

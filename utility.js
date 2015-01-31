@@ -67,7 +67,7 @@ var check_entity_type = function (entity, entity_type) {
 //takes a location and an entity type
 //returns a list of adjacent locations that match the type
 var get_adjacent_entities_locations = function (col, row, entity_type) {
-  var locations = new Array();
+  var locations = [];
   if (col > 0)
     if (check_entity_type(entities[col - 1][row], entity_type)) {
       locations.push(new Point(col - 1, row));

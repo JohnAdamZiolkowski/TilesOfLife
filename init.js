@@ -8,10 +8,16 @@ email:  johnadamziolkowski@gmail.com
 "use strict";
 
 var init = function () {
-  canvas = document.getElementById('world');
+  canvas = document.getElementById('canvas');
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-  c = canvas.getContext('2d');
+  canvas_context = canvas.getContext('2d');
+  //buffer = canvas.getContext('2d');
+  buffer = document.createElement('canvas');
+  buffer.width = canvas.width;
+  buffer.height = canvas.height;
+  buffer_context = buffer.getContext('2d');
+
 
   phase = 0;
 
@@ -22,28 +28,31 @@ var init = function () {
   set_action_types();
   set_defaults();
   set_states();
-  
+
   base_entity = new Entity();
 
-  //board = new Board(board_position, board_size, board_grid,
-  //  board_depth, line_width);
-  board = new Board(board_position, board_size,  new Point(get_random_int(1, 16), get_random_int(1, 16)),
+  board = new Board(board_position, board_size, board_grid,
     board_depth, line_width);
+//  board = new Board(board_position, board_size, new Point(get_random_int(1, 32), get_random_int(1, 16)),
+//    board_depth, line_width);
 
   generate_cells();
   generate_entities();
 
   cursor = new Cursor(cursor_position, cursor_size, cursor_speed);
-  populations = new Array();
+  populations = [];
   populations.push(new Population(cells, entities));
   graph = new Graph(graph_position, graph_size, graph_padding);
-  console = new Console();
+  messenger = new Messenger();
   menu = new Menu(menu_position, menu_size, menu_padding, menu_text_size);
-  
+  entity_painter = new EntityPainter();
+  shadow_painter = new ShadowPainter();
+  cell_painter = new CellPainter();
+
   date_started = new Date().getTime();
   date_last_frame = date_started;
   date_last_phase = date_started;
-  
+
   state = states.main;
 }; // end init
 
@@ -51,8 +60,8 @@ var set_defaults = function () {
   time_per_phase = 1000;
 
   board_position = new Point(240, 100);
-  board_size = new Point(400, 400);
-  board_grid = new Point(8, 8);
+  board_size = new Point(800, 400);
+  board_grid = new Point(32, 16);
   board_depth = 0.33;
   line_width = 2;
 
@@ -65,11 +74,19 @@ var set_defaults = function () {
   graph_size = new Point(400, 200);
   //TODO: implement graph_padding
   graph_padding = 25;
-  
+
   menu_position = new Point(400, 100);
-  menu_size = new Point(250, 400);
+  menu_size = new Point(250, 450);
   menu_padding = 20;
   menu_text_size = 20;
+
+  show_fullscreen = false;
+  show_graphs = true;
+  show_performance_data = true;
+  show_instructions = true;
+  do_auto_phase = true;
+  show_entities = true;
+  show_cells = true;
 }; // end set_defautls
 
 var set_colors = function () {
@@ -100,7 +117,7 @@ var set_colors = function () {
 }; // end set_colors
 
 var set_cell_types = function () {
-  cell_types = new Array();
+  cell_types = [];
   cell_types.push(new Stone());
   cell_types.push(new Dirt());
   cell_types.push(new Grass());
@@ -114,7 +131,7 @@ var set_cell_types = function () {
 }; // end set_cell_types
 
 var set_entity_types = function () {
-  entity_types = new Array();
+  entity_types = [];
   entity_types.push(new NoEntity());
   entity_types.push(new Sheep());
   entity_types.push(new Sheepling());
@@ -133,8 +150,21 @@ var set_entity_types = function () {
   entity_types.corpseling = entity_types[i++];
 }; // end set_entity_types
 
+//TODO: deal with this...
+var get_entity_type_index = function (entity) {
+  for (var i = 0; i < entity_types.length; i++)
+    if (entity_types[i].name == entity.name)
+      return i;
+};
+//TODO: deal with this...
+var get_cell_type_index = function (cell) {
+  for (var i = 0; i < cell_types.length; i++)
+    if (cell_types[i].name == cell.name)
+      return i;
+};
+
 var set_action_types = function () {
-  action_types = new Array();
+  action_types = [];
   action_types.nothing = "nothing";
   action_types.move = "move";
   action_types.graze = "graze";
@@ -147,7 +177,7 @@ var set_action_types = function () {
 };
 
 var set_entity_types2 = function () {
-  entity_types2 = new Array();
+  entity_types2 = [];
   entity_types2.noEntity = NoEntity;
   entity_types2.sheep = Sheep;
   entity_types2.sheepling = Sheepling;
@@ -155,12 +185,21 @@ var set_entity_types2 = function () {
   entity_types2.wolfling = Wolfling;
   entity_types2.corpse = Corpse;
   entity_types2.corpseling = Corpseling;
+  entity_types2.push(entity_types2.noEntity);
+  entity_types2.push(entity_types2.sheep);
+  entity_types2.push(entity_types2.sheepling);
+  entity_types2.push(entity_types2.wolf);
+  entity_types2.push(entity_types2.wolfling);
+  entity_types2.push(entity_types2.corpse);
+  entity_types2.push(entity_types2.corpseling);
 };
 
 var set_states = function () {
-  states = new Array();
-  states.main = "game";
+  states = [];
+  states.main = "main";
   states.menu = "menu";
+  states.title = "title"; //TODO: add title state
+  states.about = "about"; //TODO: add about state
 };
 
 var set_state = function (new_state) {
@@ -172,46 +211,66 @@ var update = function () {
   var date_this_frame = (new Date().getTime());
   var time_passed_since_last_frame = date_this_frame - date_last_frame;
   var time_passed_since_last_phase = date_this_frame - date_last_phase;
-  
-//  console.override = "";
-//  console.override += "<br>ms since last frame: "+time_passed_since_last_frame;
-//  console.override += "<br>frames per ms: "+(time_passed_since_last_frame / 1000).toFixed(2);
-//  
-//  console.override += "<br>planned frames per second: "+60;
-//  console.override += "<br>frames per second: "+(1 /(time_passed_since_last_frame / 1000)).toFixed(0);
-//  
-//  console.override += "<br>ms since last phase: "+time_passed_since_last_phase;
-//  console.override += "<br>planned ms per phase: "+time_per_phase;
-  if (state == states.main){
-    if (time_passed_since_last_phase >= time_per_phase) {
-      date_last_phase = date_this_frame;
-      date_last_frame = date_this_frame;
-      board.next_phase();
+
+  messenger.update(date_this_frame);
+  if (state == states.main) {
+    date_last_frame = date_this_frame;
+
+    if (do_auto_phase) {
+      if (time_passed_since_last_phase >= time_per_phase) {
+        date_last_phase = date_this_frame;
+        board.next_phase();
+      }
     }
-  }
-  else if (state == states.menu) {
+  } else if (state == states.menu) {
     //TODO: ???
   }
-  
+
   controller.update(time_passed_since_last_frame);
-  
+
   date_last_frame = date_this_frame;
 }; //end update
 
 var draw = function () {
   //clear canvas
-  c.clearRect(0, 0, canvas.width, canvas.height);
+  canvas_context.clearRect(0, 0, canvas.width, canvas.height);
+  buffer_context.clearRect(0, 0, canvas.width, canvas.height);
 
-  if (state == states.main){
-    board.draw(c);
-    graph.draw(c);
-    cursor.draw(c);
+  if (state == states.main) {
+    board.draw(buffer_context);
+    if (show_graphs) graph.draw(buffer_context);
+    cursor.draw(buffer_context);
+  } else if (state == states.menu) {
+    menu.draw(buffer_context);
+  } else if (state == states.about) {
+
+    var row;
+    var col;
+    var rows = board.rows;
+    var cols = board.cols;
+    var et = [];
+    var ex = [];
+    var ey = [];
+    var x = board.x;
+    var y = board.y;
+    var cw = board.col_width;
+    var rh = board.row_height;
+
+    for (row = 0; row < rows; row++) {
+      for (col = 0; col < cols; col++) {
+        et.push(get_random_int(0, cell_types.length - 1));
+        ex.push(row * cw);
+        ey.push(col * rh);
+      }
+    }
+
+    shadow_painter.draw(buffer_context, et, ex, ey);
   }
-  else if (state == states.menu) {
-    menu.draw(c);
-  }
-  
-    console.draw();
+
+
+  canvas_context.drawImage(buffer, 0, 0);
+
+  messenger.draw();
 }; // end draw
 
 var doLoop = function () {

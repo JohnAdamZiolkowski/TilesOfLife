@@ -46,15 +46,30 @@ var menu_text_size;
 var colors;
 
 var canvas;
-var c;
+var canvas_context;
+var buffer;
+var buffer_context;
+
+var entity_painter;
+var shadow_painter;
+var cell_painter;
 
 var cursor;
 var board;
 var phase;
 var graph;
-var console;
+var messenger;
 var controller;
 var menu;
 
 var state;
 var states;
+
+var show_graphs;
+var show_fullscreen;
+var show_performance_data;
+var show_instructions;
+var show_about;
+var show_cells;
+var show_entities;
+var do_auto_phase;

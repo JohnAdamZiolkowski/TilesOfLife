@@ -38,7 +38,7 @@ var Entity = function () {
   };
   
   this.choose_action = function (entity) {
-    var actions = new Array();
+    var actions = [];
 
     //eat cell
     //only if hungry and standing on cell

@@ -10,10 +10,6 @@ email:  johnadamziolkowski@gmail.com
 window.onload = function () {
   fullscreenElement = false;
   fullscreenEnabled = false;
-  canvas = document.getElementById('world');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  c = canvas.getContext('2d');
   controller = new Controller();
   init();
   doLoop();
@@ -36,15 +32,18 @@ window.addEventListener("keyup", function (e) {
   delete controller.keysDown[e.keyCode];
 }, false);
 
-document.documentElement.addEventListener("click", function (e) {
-  document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);  
+document.addEventListener("click", function (e) {
+
+  controller.click();
 
 }, false);
 
-window.addEventListener("fullscreenchange ", function (e) {
-  fullscreenElement = document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement;
-  fullscreenEnabled = document.fullscreenEnabled || document.mozFullScreenEnabled || document.webkitFullscreenEnabled;
-}, false);
+
+//TODO: figure out why fullscreenchange event handler isn't firing
+//document.addEventListener("fullscreenchange", function (e) {
+//  fullscreenElement = document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement;
+//  fullscreenEnabled = document.fullscreenEnabled || document.mozFullScreenEnabled || document.webkitIsFullScreen ? true : false;;
+//}, false);
 
 window.requestAnimFrame = (function () {
   return window.requestAnimationFrame ||
@@ -55,24 +54,24 @@ window.requestAnimFrame = (function () {
     };
 })();
 
-function launchIntoFullscreen(element) {
-  if(element.requestFullscreen) {
-    element.requestFullscreen();
-  } else if(element.mozRequestFullScreen) {
-    element.mozRequestFullScreen();
-  } else if(element.webkitRequestFullscreen) {
-    element.webkitRequestFullscreen();
-  } else if(element.msRequestFullscreen) {
-    element.msRequestFullscreen();
+function requestFullscreen() {
+  if (document.documentElement.requestFullscreen) {
+    document.documentElement.requestFullscreen();
+  } else if (document.documentElement.mozRequestFullScreen) {
+    document.documentElement.mozRequestFullScreen();
+  } else if (document.documentElement.webkitRequestFullscreen) {
+    document.documentElement.webkitRequestFullscreen();
+  } else if (document.documentElement.msRequestFullscreen) {
+    document.documentElement.msRequestFullscreen();
   }
 }
 
 function exitFullscreen() {
-  if(document.exitFullscreen) {
+  if (document.exitFullscreen) {
     document.exitFullscreen();
-  } else if(document.mozCancelFullScreen) {
+  } else if (document.mozCancelFullScreen) {
     document.mozCancelFullScreen();
-  } else if(document.webkitExitFullscreen) {
+  } else if (document.webkitExitFullscreen) {
     document.webkitExitFullscreen();
   }
 }
