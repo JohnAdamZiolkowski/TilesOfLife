@@ -35,6 +35,7 @@ var Entity = function () {
   this.set_location = function (entity, col, row) {
     entity.col = col;
     entity.row = row;
+    entity.type_index = get_entity_type_index(entity);
   };
   
   this.choose_action = function (entity) {

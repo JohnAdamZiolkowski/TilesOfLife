@@ -9,13 +9,12 @@ email:  johnadamziolkowski@gmail.com
 
 var CellPainter = function () {
 
-  this.n = cell_types.length;
+  this.colors = cell_types.length;
   this.cell_colors = [];
 
-  var i;
-  for (i = 0; i < this.n; ++i) {
-    this.cell_colors.push(cell_types[i].color.string);
-    //this.cell_colors.push(colors.cursor.string);
+  var c;
+  for (c = 0; c < this.colors; c++) {
+    this.cell_colors.push(cell_types[c].color.string);
   }
 
   this.w = board.col_width;
@@ -23,37 +22,43 @@ var CellPainter = function () {
 
   //TODO: worry about dirt patch later
 
-  this.off = document.createElement('canvas');
-  this.off.width = Math.ceil(this.n * this.w);
-  this.off.height = Math.ceil(this.h);
-  this.ctx = this.off.getContext('2d');
-
-  for (i = 0; i < this.n; ++i) {
-    this.ctx.fillStyle = this.cell_colors[i];
-    this.ctx.fillRect(i * this.w, 0, this.w, this.h);
-    this.ctx.fill();
-  }
-
-  //need to pass in a grid of entities positions and their type for color
+  // takes the following arguments:
+  // context: canvas context for drawing
+  // ct: array of cell type indexes to draw
+  // cx, cy: arrays of cell positions
   this.draw = function (context, ct, cx, cy) {
 
-    var n = ct.length;
-
-    var i;
+     //number of colors
+    var colors = this.colors;
+    var cells = ct.length;
+    
+     //color-sorted x positions
+    var ccx = new Array(colors);
+    var ccy = new Array(colors);
+    
+    //color
     var c;
-    var x;
-    var y;
-    for (i = 0; i < n; ++i) {
-
-      c = ct[i];
-      x = cx[i];
-      y = cy[i];
-      context.drawImage(this.off, c * this.w, 0, this.w, this.h, x, y, this.w, this.h);
-
+    for (c = 0; c < colors; c++) {
+      ccx[c] = [];
+      ccy[c] = [];
     }
-    //debug draw 
+    
+    //sorts each requested cell into proper color's array
+    var cell;
+    for (cell = 0; cell < cells; cell++) {
+      c = ct[cell];
+      ccx[c].push(cx[cell]);
+      ccy[c].push(cy[cell]);
+    }
 
-    context.drawImage(this.off, 0, 0);
+    //draws each cell 
+    var cells_in_color;
+    for (c = 0; c < colors; c++) {
+      context.fillStyle = this.cell_colors[c];
+      var cells_in_color = ccx[c].length;
+      for (cell = 0; cell < cells_in_color; cell++) {
+        context.fillRect(ccx[c][cell], ccy[c][cell], this.w, this.h);
+      }
+    }
   };
-
 };

@@ -8,6 +8,7 @@ email:  johnadamziolkowski@gmail.com
 "use strict";
 
 var Stone = function () {
+  this.type_index = 0;
   this.name = "stone";
   this.color = colors.stone;
 
@@ -21,6 +22,7 @@ var Stone = function () {
   };
 };
 var Grass = function () {
+  this.type_index = 2;
   this.name = "grass";
   this.color = colors.grass;
 
@@ -45,6 +47,7 @@ var Grass = function () {
   }
 };
 var Water = function () {
+  this.type_index = 3;
   this.name = "water";
   this.color = colors.water;
 
@@ -58,6 +61,7 @@ var Water = function () {
   };
 };
 var Dirt = function () {
+  this.type_index = 1;
   this.name = "dirt";
   this.color = colors.dirt;
 

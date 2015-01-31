@@ -53,6 +53,7 @@ var buffer_context;
 var entity_painter;
 var shadow_painter;
 var cell_painter;
+var line_painter;
 
 var cursor;
 var board;

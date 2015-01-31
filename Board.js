@@ -24,36 +24,40 @@ var Board = function (position, size, grid, depth, line_width) {
   this.radius = get_radius(this.col_width, this.row_height) * 0.75;
 
   this.draw = function (c) {
-    //this.draw_cells_faster(c);
-    this.draw_cells(c);
-    this.draw_cell_lines(c);
-    //var t0 = Date.now();
-    this.draw_entities_faster(c);
+    //this.draw_cells(c);
+    //this.draw_cell_lines(c);
+    //this.draw_cell_extras(c);
     //this.draw_entities(c);
-    //performance data:
-    //var t1 = Date.now();
-    //messenger.override = (t1 - t0) + "ms"
+
+    this.draw_cells_faster(c);
+    this.draw_cell_lines_faster(c);
+    this.draw_cell_extras_faster(c);
+    this.draw_entities_faster(c);
   };
 
-  this.draw_cells_faster = function(c) {
+  this.draw_cells_faster = function (c) {
 
     var ct = [];
     var cx = [];
     var cy = [];
-    
+
     for (var row = 0; row < this.rows; row++) {
       for (var col = 0; col < this.cols; col++) {
         var cell = cells[col][row];
         ct.push(get_cell_type_index(cell));
-        cx.push(this.x + this.col_width * col + this.line_width);
-        cy.push(this.y + this.row_height * row + this.line_width);
-        
+        cx.push(this.x + this.col_width * col);
+        cy.push(this.y + this.row_height * row);
+
       }
     }
-    
+
     cell_painter.draw(c, ct, cx, cy);
   };
-  
+
+  this.line_radius = this.line_width / 2;
+  this.line_width2 = this.line_width * 2;
+
+
   //draws every cell on the grid
   this.draw_cells = function (c) {
     var radius = get_radius(this.col_width, this.row_height) * 0.75;
@@ -135,6 +139,323 @@ var Board = function (position, size, grid, depth, line_width) {
       }
     }
   }; // end Board.draw_cells
+
+  //draws every cell's outlines on the grid
+  //TODO: change fillRect to use line stroke
+  this.draw_cell_lines_faster = function (c) {
+    var lt = [];
+    var lm = [];
+    var lx = [];
+    var ly = [];
+    var lw = [];
+    var lh = [];
+    var ld = [];
+    var cell;
+    var cell_left;
+    var cell_right;
+    var cell_above;
+    var cell_below;
+
+    var rows = this.rows;
+    var cols = this.cols;
+    var row;
+    var col;
+
+    var col_x;
+    var row_y;
+    var col_x2;
+    var row_y2;
+
+    var ct;
+    var ctm;
+
+    for (row = 0; row < rows; row++) {
+      for (col = 0; col < cols; col++) {
+
+        cell = cells[col][row];
+        if (col > 0) cell_left = cells[col - 1][row];
+        else cell_left = 0;
+        if (col < cols - 1) cell_right = true;
+        else cell_right = false;
+        if (row > 0) cell_above = cells[col][row - 1];
+        else cell_above = 0;
+        if (row < rows - 1) cell_below = true;
+        else cell_below = false;
+
+
+        col_x = this.x + this.col_width * col;
+        row_y = this.y + this.row_height * row;
+        col_x2 = col_x + this.col_width;
+        row_y2 = row_y + this.row_height;
+
+
+        //left line
+        ct = get_cell_type_index(cell);
+        lt.push(ct);
+        if (cell_left) {
+          lm.push(get_cell_type_index(cell_left));
+        } else {
+          lm.push(ct);
+        }
+        lx.push(col_x - this.line_radius);
+        ly.push(row_y);
+        lw.push(this.line_width);
+        lh.push(this.row_height);
+        ld.push(false);
+
+
+        //top line
+        ct = get_cell_type_index(cell);
+        lt.push(ct);
+        if (cell_above) {
+          lm.push(get_cell_type_index(cell_above));
+        } else {
+          lm.push(ct);
+        }
+        lx.push(col_x + this.line_radius);
+        ly.push(row_y - this.line_radius);
+        lw.push(this.col_width - this.line_width);
+        lh.push(this.line_width);
+        ld.push(false);
+
+        //right line
+        if (!cell_right) {
+          ct = get_cell_type_index(cell);
+          lt.push(ct);
+          lm.push(ct);
+          lx.push(col_x + this.col_width - this.line_radius);
+          ly.push(row_y);
+          lw.push(this.line_width);
+          lh.push(this.row_height);
+          ld.push(false);
+        }
+
+        //bottom row
+        if (!cell_below) {
+          //bottom line of grid
+          ct = get_cell_type_index(cell);
+          lt.push(ct);
+          lm.push(ct);
+          lx.push(col_x + this.line_radius);
+          ly.push(row_y2 - this.line_radius);
+          lw.push(this.col_width - this.line_width);
+          lh.push(this.line_width);
+          ld.push(true);
+
+          //front face of the bottom cells
+          ct = get_cell_type_index(cell);
+          lt.push(ct);
+          lm.push(ct);
+          lx.push(col_x + this.line_radius);
+          ly.push(row_y2 + this.line_radius);
+          lw.push(this.col_width - this.line_width);
+          lh.push(this.depth);
+          ld.push(false);
+
+          //bottom line of depth
+          ct = get_cell_type_index(cell);
+          lt.push(ct);
+          lm.push(ct);
+          lx.push(col_x + this.line_radius);
+          ly.push(row_y2 + this.depth);
+          lw.push(this.col_width - this.line_width);
+          lh.push(this.line_width);
+          ld.push(true);
+
+          //left line of depth
+          ct = get_cell_type_index(cell);
+          lt.push(ct);
+          if (cell_left) {
+            lm.push(get_cell_type_index(cell_left));
+          } else {
+            lm.push(ct);
+          }
+          lx.push(col_x - this.line_radius);
+          ly.push(row_y2 - this.line_radius);
+          lw.push(this.line_width);
+          lh.push(this.depth + this.line_width);
+          ld.push(true);
+
+          //right line of depth
+          if (!cell_right) {
+            ct = get_cell_type_index(cell);
+            lt.push(ct);
+            lm.push(ct);
+            lx.push(col_x2 - this.line_radius);
+            ly.push(row_y2 - this.line_radius);
+            lw.push(this.line_width);
+            lh.push(this.depth + this.line_width);
+            ld.push(true);
+          }
+        }
+      }
+    }
+
+    line_painter.draw(c, lt, lm, lx, ly, lw, lh, ld);
+  }; // end Board.draw_cell_lines
+
+  //TODO: clean up mess
+  this.dce_radius = get_radius(this.col_width, this.row_height) * 0.75;
+  this.dce_amp = this.dce_radius / 2;
+  this.dce_freq = 0.5;
+  this.water_color = cell_types.water.color.string;
+  this.water_darker = cell_types.water.color.darken().string;
+
+  this.draw_cell_extras_faster = function (c) {
+
+    var cell;
+    var cell_above;
+    var sine;
+    var offset;
+    var base_w = this.col_width - this.line_width;
+
+    //skip top row
+    for (var row = 1; row < this.rows; row++) {
+
+      var base_y = this.y + this.row_height * row + this.line_radius;
+
+      for (var col = 0; col < this.cols; col++) {
+
+        var base_x = this.x + this.col_width * col + this.line_width / 2;
+
+        offset = 0;
+
+        cell = cells[col][row];
+        if (check_cell_type(cell, cell_types.water)) {
+
+          sine = get_propper_sine(this.dce_amp, this.dce_freq, col, row);
+          offset = sine / 2 + this.dce_amp / 2;
+
+          cell_above = cells[col][row - 1];
+          if (check_cell_type(cell_above, cell_types.water)) {
+            // water color overlay that hides the grid line
+            c.fillStyle = colors.water.string;
+            c.fillRect(
+              base_x,
+              base_y - this.line_width - this.line_radius,
+              base_w,
+              offset + this.line_width);
+
+            // waving line where the water meets the cell above (darkened once)
+            c.fillStyle = colors.water.darken().string;
+            c.fillRect(
+              base_x,
+              base_y + offset - this.line_width,
+              base_w,
+              this.line_width);
+
+          } else {
+            var cell_above_color = cell_above.color;
+            
+            //line of the cell above, not mixed (darkened twice)
+            c.fillStyle =cell_above_color.darken().darken().string;
+            c.fillRect(
+              base_x,
+              base_y - this.line_width,
+              base_w,
+              this.line_width);
+
+            //shadow of the cell above, not mixed (darkened once)
+            c.fillStyle = cell_above_color.darken().string;
+            c.fillRect(
+              base_x,
+              base_y,
+              base_w,
+              offset);
+
+            //waving line where the water meets the cell above, mixed (darkened once)
+            c.fillStyle = colors.water.darken().string;
+            c.fillRect(
+              base_x,
+              base_y + offset - this.line_width,
+              base_w,
+              this.line_width);
+
+            //shadow of the cell above, mixed (darkened once)
+            c.fillStyle = mix_colors(cell_above_color.darken(), colors.water).string;
+            c.fillRect(
+              base_x,
+              base_y + offset,
+              base_w,
+              this.radius - offset - this.line_width);
+          }
+        }
+      }
+    }
+    
+    //draw dirt patch on half eaten grass cells
+    c.fillStyle = colors.dirt.string;
+    for (var row = 1; row < this.rows; row++) {
+      var base_y = this.y + this.row_height * row + this.row_height/2;
+
+      for (var col = 0; col < this.cols; col++) {
+        var base_x = this.x + this.col_width * col + this.col_width / 2;
+        cell = cells[col][row];
+        if (! check_cell_type(cell, cell_types.grass)) continue;
+        if (cell.grass > cell.max_grass / 2) continue;
+
+        c.beginPath();
+        c.moveTo(base_x - this.col_width / 2, base_y);
+        c.lineTo(base_x, base_y - this.row_height / 2);
+        c.lineTo(base_x + this.col_width / 2, base_y);
+        c.lineTo(base_x, base_y + this.row_height / 2);
+        c.fill();
+        
+      }
+    }
+  };
+
+  this.draw_cell_extras = function (c) {
+    //outline cells
+    for (var row = 0; row < this.rows; row++) {
+      for (var col = 0; col < this.cols; col++) {
+        var cell = cells[col][row];
+        c.fillStyle = cell.color.darken().string;
+
+        var radius = get_radius(this.col_width, this.row_height) * 0.75;
+
+        var offset = 0;
+
+        //top
+        if (row > 0) {
+          var cell_above = cells[col][row - 1];
+          if (cell.name != cell_above.name) {
+            c.fillStyle = mix_colors(cell.color, cell_above.color).darken().string;
+          }
+        }
+
+        if (row > 0)
+          if (check_cell_type(cell, cell_types.water))
+            if (check_cell_type(cell_above, cell_types.water)) {
+
+              var amp = radius / 2;
+              var freq = 0.5;
+              var sine = get_propper_sine(amp, freq, col, row);
+              offset = sine / 2 + amp / 2;
+
+              c.fillStyle = cell.color.string;
+              c.fillRect(
+                this.x + this.col_width * col + this.line_width,
+                this.y + this.row_height * row,
+                this.col_width - this.line_width,
+                this.line_width + offset);
+
+              c.fillStyle = cell.color.darken().string;
+            }
+
+        c.fillRect(
+          this.x + this.col_width * col + this.line_width,
+          this.y + this.row_height * row + offset,
+          this.col_width - this.line_width,
+          this.line_width);
+      }
+
+    }
+
+  };
+
+
+
 
   //draws every cell's outlines on the grid
   //TODO: change fillRect to use line stroke
@@ -256,6 +577,13 @@ var Board = function (position, size, grid, depth, line_width) {
     }
   }; // end Board.draw_cell_lines
 
+
+  this.de_radius = get_radius(this.col_width, this.row_height) * 0.75;
+  this.de_freq = 0.5;
+  this.de_amp = this.de_radius / 2;
+  this.de_base_x = this.x + this.col_width / 2 + this.line_width / 2;
+  this.de_base_y = this.y + this.row_height / 2 + this.line_width / 2;
+
   this.draw_entities_faster = function (c) {
 
       var row;
@@ -271,60 +599,43 @@ var Board = function (position, size, grid, depth, line_width) {
       var ling = [];
       var x = board.x;
       var y = board.y;
-      var cw = board.col_width;
-      var rh = board.row_height;
 
       var entity;
       var cell;
 
-      var radius = get_radius(this.col_width, this.row_height) * 0.75;
-      var freq = 0.5;
-      var amp = radius / 2;
-
-      var sine;
-      var degree;
       var bobbing_offset;
       var scale;
 
       var shadow_x;
       var shadow_y;
-
-      var scale_x;
-      var scale_y;
-
       var entity_x;
       var entity_y;
 
       for (row = 0; row < rows; row++) {
         for (col = 0; col < cols; col++) {
           entity = entities[col][row];
-          if (check_entity_type(entity, entity_types.noEntity)) {
+          if (entity.type_index === 0) {
             continue;
           }
 
-          et.push(get_entity_type_index(entity));
-          
+          et.push(entity.type_index);
+
           cell = cells[col][row];
-          if (! check_cell_type(cell, cell_types.grass)) {
-            st.push(get_cell_type_index(cell));
+          if (cell.type_index != 2) {
+            st.push(cell.type_index);
           } else {
-            if (cell.grass <= cell.max_grass / 2) {
-              st.push(get_cell_type_index(cell.under));
-            } else { 
-              st.push(get_cell_type_index(cell));
+            if (cell.grass <= 4 / 2) {
+              st.push(1);
+            } else {
+              st.push(2);
             }
           }
 
-          sine = 0;
-          degree = 0;
           bobbing_offset = 0;
-
           if (check_cell_type(cell, cell_types.water)) {
-            sine = get_propper_sine(amp, freq, col, row);
-            degree = get_bobbing_degree(amp, freq, col, row);
-            bobbing_offset = get_propper_sine(amp, freq, col, row) / 2 + amp / 2;
+            bobbing_offset = get_propper_sine(this.de_amp, this.de_freq, col, row) / 2 + this.de_amp / 2;
           }
-          
+
           if (entity.ling) {
             scale = 0.66;
             ling.push(true);
@@ -332,20 +643,20 @@ var Board = function (position, size, grid, depth, line_width) {
             scale = 1;
             ling.push(false);
           }
-            
+          var bobbing_scaled = bobbing_offset * scale;
 
           //entity circle
-          var base_x =  (this.x) + (this.col_width * col) + (this.col_width / 2) + (this.line_width / 2);
-          var base_y = (this.y) + (this.row_height * row) + (this.row_height / 2) + (this.line_width / 2);
+          var base_x = this.col_width * col + this.de_base_x;
+          var base_y = this.row_height * row + this.de_base_y;
           entity_x = base_x;
-          entity_y = base_y - radius + (1 - scale) * radius;
+          entity_y = base_y - this.de_radius + (1 - scale) * this.de_radius;
           shadow_x = base_x;
-          shadow_y = base_y;// + radius / 2;// * (1 - scale) + radius / 2;
-          
+          shadow_y = base_y;
+
           ex.push(entity_x);
-          ey.push(entity_y + bobbing_offset * scale);
+          ey.push(entity_y + bobbing_scaled);
           sx.push(shadow_x);
-          sy.push(shadow_y + bobbing_offset * scale);
+          sy.push(shadow_y + bobbing_scaled);
         }
       }
       shadow_painter.draw(c, st, sx, sy, ling);

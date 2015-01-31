@@ -33,8 +33,8 @@ var init = function () {
 
   board = new Board(board_position, board_size, board_grid,
     board_depth, line_width);
-//  board = new Board(board_position, board_size, new Point(get_random_int(1, 32), get_random_int(1, 16)),
-//    board_depth, line_width);
+board = new Board(board_position, board_size, new Point(get_random_int(1, 32), get_random_int(1, 16)),
+board_depth, line_width);
 
   generate_cells();
   generate_entities();
@@ -48,6 +48,7 @@ var init = function () {
   entity_painter = new EntityPainter();
   shadow_painter = new ShadowPainter();
   cell_painter = new CellPainter();
+  line_painter = new CellLinePainter();
 
   date_started = new Date().getTime();
   date_last_frame = date_started;
@@ -61,7 +62,7 @@ var set_defaults = function () {
 
   board_position = new Point(240, 100);
   board_size = new Point(800, 400);
-  board_grid = new Point(32, 16);
+  board_grid = new Point(8, 8);
   board_depth = 0.33;
   line_width = 2;
 
@@ -234,14 +235,13 @@ var update = function () {
 var draw = function () {
   //clear canvas
   canvas_context.clearRect(0, 0, canvas.width, canvas.height);
-  buffer_context.clearRect(0, 0, canvas.width, canvas.height);
 
   if (state == states.main) {
-    board.draw(buffer_context);
-    if (show_graphs) graph.draw(buffer_context);
-    cursor.draw(buffer_context);
+    board.draw(canvas_context);
+    if (show_graphs) graph.draw(canvas_context);
+    cursor.draw(canvas_context);
   } else if (state == states.menu) {
-    menu.draw(buffer_context);
+    menu.draw(canvas_context);
   } else if (state == states.about) {
 
     var row;
@@ -264,11 +264,8 @@ var draw = function () {
       }
     }
 
-    shadow_painter.draw(buffer_context, et, ex, ey);
+    shadow_painter.draw(canvas_context, et, ex, ey);
   }
-
-
-  canvas_context.drawImage(buffer, 0, 0);
 
   messenger.draw();
 }; // end draw
