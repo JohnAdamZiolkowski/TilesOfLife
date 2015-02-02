@@ -51,12 +51,12 @@ var Messenger = function () {
   this.draw_instructions = function () {
 
     this.message += "CONTROLS";
+    this.message += "<br>- Enter:  open menu";
     this.message += "<br>- Arrows: move cursor";
     this.message += "<br>- Tab:    select brush";
     this.message += "<br>- +Shift: select previous";
     this.message += "<br>- Space:  place selected";
     this.message += "<br>- +Shift:  fill board";
-    this.message += "<br>- Enter:  next phase";
     this.message += "<br>- Backspace: new board";
     this.message += "<br><br>";
 
@@ -79,7 +79,9 @@ var Messenger = function () {
 
     this.message += "WORLD INFO";
     this.message += "<br>- Phase: " + phase;
-
+    var next = (time_per_phase / 1000 - this.time_passed_since_last_phase / 1000).toFixed(1);
+    if (next < 0.1) next = 0.1;
+    this.message += "<br>- Next in: " + next;
     this.message += "<br><br>---<br><br>";
 
     this.message += "INSPECTOR";

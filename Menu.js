@@ -77,7 +77,7 @@ var Menu = function (position, size, padding, text_size) {
   this.resize = function () {
     
     var x = window.innerWidth / 2 - this.w / 2;
-    var y = window.innerHeight / 3 - this.h / 2; 
+    var y = 120; 
     
     this.canvas.style.left = x + "px";
     this.canvas.style.top = y + "px";
@@ -86,6 +86,7 @@ var Menu = function (position, size, padding, text_size) {
   
   };
   
+  this.resize();
   
   this.draw = function () {
     var bar_x;
@@ -153,10 +154,10 @@ var Menu = function (position, size, padding, text_size) {
           strings.push("Show Graphs");
         break;
       case this.items.show_fullscreen:
-        if (fullscreenEnabled)
-          strings.push("Click to Exit Fullscreen");
+        if (this.selected === 0)
+          strings.push("Click to Toggle Fullscreen");
         else
-          strings.push("Click to Enter Fullscreen");
+          strings.push("Toggle Fullscreen");
         break;
       case this.items.show_performance_data:
         if (show_performance_data)
@@ -193,10 +194,12 @@ var Menu = function (position, size, padding, text_size) {
 
     fullscreenEnabled = document.fullscreenEnabled || document.mozFullScreenEnabled || document.webkitIsFullScreen ? true : false;
 
+    if (this.selected === 0) {
     if (fullscreenEnabled) {
       exitFullscreen();
     } else {
       requestFullscreen();
+    }
     }
   };
 

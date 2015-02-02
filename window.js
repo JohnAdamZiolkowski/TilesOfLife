@@ -21,6 +21,9 @@ function resize_handler() {
   bg_canvas.height = window.innerHeight;
   background.resize();
   menu.resize();
+  subtitle.resize();
+  graph.resize();
+  board.resize();
   
 }
 

@@ -55,6 +55,31 @@ email:  johnadamziolkowski@gmail.com
       letter-spacing: 1px;
       <!-- text-shadow: 4px 4px 4px #111;
       --->
+    }    .messenger2 {
+      z-index: 10;
+      position: absolute;
+      left: 1em;
+      top: 1em;
+      color: #FFF;
+      font-family: 'Droid Sans Mono';
+      font-size: 0.8em;
+      line-height: 125%;
+      letter-spacing: 1px;
+      <!-- text-shadow: 4px 4px 4px #111;
+      --->
+    }
+    #subtitle {
+      z-index: 11;
+      color: #FFF;
+      font-family: 'Droid Sans Mono';
+      font-size: 2em;
+      letter-spacing: 1px;
+      
+    }
+    #subtitle_overlay {
+      width: 800;
+      margin:0 auto;
+      text-align: center;
     }
     
     body {
@@ -68,6 +93,9 @@ email:  johnadamziolkowski@gmail.com
 <body bgcolor="#112211">
   <div class="overlay">
     <h1 id="messenger" class="messenger">0</h1>
+  </div>
+  <div class="overlay2">
+    <h1 id="messenger2" class="messenger2">Tiles Of Life</h1>
   </div>
   <canvas id="bg_canvas"></canvas>
   <canvas id="static_canvas"></canvas>
@@ -96,4 +124,5 @@ email:  johnadamziolkowski@gmail.com
   <script src="ShadowPainter.js"></script>
   <script src="CellLinePainter.js"></script>
   <script src="Background.js"></script>
+  <script src="Subtitle.js"></script>
 </body>

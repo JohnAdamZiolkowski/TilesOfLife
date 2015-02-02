@@ -45,7 +45,8 @@ var init = function () {
   graph = new Graph(graph_position, graph_size, graph_padding);
   messenger = new Messenger();
   menu = new Menu(menu_position, menu_size, menu_padding, menu_text_size);
-  background = new Background;
+  background = new Background();
+  subtitle = new Subtitle();
 
   entity_painter = new EntityPainter();
   shadow_painter = new ShadowPainter();
@@ -68,15 +69,15 @@ var init = function () {
 }; // end init
 
 var set_defaults = function () {
-  time_per_phase = 1000;
+  time_per_phase = 5000;
 
   board_position = new Point(240, 100);
-  board_size = new Point(800, 400);
-  board_grid = new Point(32, 16);
+  board_size = new Point(400, 400);
+  board_grid = new Point(8, 12);
   board_depth = 0.33;
   line_width = 2;
 
-  cursor_position = new Point(300, 50);
+  cursor_position = new Point(window.innerWidth/2, 600);
   cursor_size = new Point(50, 50);
   cursor_speed = 1000;
 
@@ -333,10 +334,14 @@ var draw = function () {
     redraw_menu = false;
   }
   if (redraw_messenger) {
-    messenger.draw();
+    if (window.innerWidth < 950)
+      messenger.override = "< expand window for info";
+    else
+      messenger.override = "";
+    
+    messenger.draw()
     redraw_messenger = true;
   }
-
 }; // end draw
 
 var doLoop = function () {

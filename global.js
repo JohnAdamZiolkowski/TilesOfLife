@@ -64,6 +64,7 @@ var board;
 var phase;
 var graph;
 var messenger;
+var subtitle;
 var controller;
 var menu;
 var background;

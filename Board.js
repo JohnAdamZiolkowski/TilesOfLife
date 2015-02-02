@@ -45,8 +45,16 @@ var Board = function (position, size, grid, depth, line_width) {
   this.active_context = this.active_canvas.getContext('2d');
 
 
-
-
+  this.resize = function () {
+    var x = window.innerWidth / 2 - this.w / 2; 
+    this.x = x;
+    this.active_canvas.style.left = x + "px";
+    this.static_canvas.style.left = x + "px";
+    
+  };
+  this.resize();
+  
+  
   this.clear_active = function () {
     this.active_context.clearRect(0, 0, this.active_canvas.width, this.active_canvas.height);
   };
@@ -500,6 +508,38 @@ var Board = function (position, size, grid, depth, line_width) {
           ey.push(entity_y + bobbing_scaled);
           sx.push(shadow_x);
           sy.push(shadow_y + bobbing_scaled);
+          
+          //TODO: fix this hack
+          if (row == rows-1)
+            continue;
+          
+          var entity_below = entities[col][row+1];
+          var entity_below_index = entity_below.type_index;
+          if (entity_below_index === 0)
+            continue;
+          if (entity_below.ling)
+            continue;
+          
+          var cell_below = cells[col][row+1];
+          var cell_below_index = cell_below.type_index;
+          
+          if (cell_below_index == 3) //water
+            continue;
+          if (cell_below_index == 2) //grass
+            if (cell_below.grass <= 2)
+              cell_below_index = 1; //dirt shadow
+
+          var gross1 = this.row_height_2 + this.row_height * (row+1);
+          var gross2 =  gross1 + this.row_height / 2 - this.de_radius;
+          
+          et.push(entity_below.type_index);
+          st.push(cell_below_index);
+          ex.push(base_x);
+          ey.push(gross2);
+          sx.push(shadow_x);
+          sy.push(gross1);
+          
+          //hack end
         }
       }
       shadow_painter.draw(this.active_context, st, sx, sy, ling);
@@ -549,7 +589,7 @@ var Board = function (position, size, grid, depth, line_width) {
       y >= this.y + this.h) {
       return_row = -1;
     } else {
-      return_row = (y - this.y) / this.row_height;
+      return_row = (y - this.y - this.row_height_2) / this.row_height;
       return_row = Math.floor(return_row);
     }
 

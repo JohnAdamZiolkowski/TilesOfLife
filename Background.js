@@ -1,3 +1,12 @@
+/*
+TilesOfLife
+author: John Adam Ziolkowski
+github: JohnAdamZiolkowski
+email:  johnadamziolkowski@gmail.com
+*/
+
+"use strict";
+
 var Background = function () {
 
   
@@ -23,6 +32,7 @@ var Background = function () {
   
     var x;
     var y;
+    var c;
     var col;
     var row;
     var cols = this.canvas.width / this.col_width;

@@ -27,6 +27,14 @@ var Graph = function (position, size, padding) {
   this.canvas.style.top = this.y + "px";
   
   this.context = this.canvas.getContext('2d');
+  
+  this.resize = function () {
+    var x = window.innerWidth / 2 - this.w / 2;
+    
+    this.canvas.style.left = x + "px";
+    
+  };
+  this.resize();
 
   this.draw = function () {
     var c = this.context;
