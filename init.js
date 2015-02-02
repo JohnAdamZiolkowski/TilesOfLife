@@ -8,16 +8,16 @@ email:  johnadamziolkowski@gmail.com
 "use strict";
 
 var init = function () {
-  canvas = document.getElementById('canvas');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  canvas_context = canvas.getContext('2d');
-  //buffer = canvas.getContext('2d');
-  buffer = document.createElement('canvas');
-  buffer.width = canvas.width;
-  buffer.height = canvas.height;
-  buffer_context = buffer.getContext('2d');
+  bg_canvas = document.getElementById('bg_canvas');
+  bg_canvas.width = window.innerWidth;
+  bg_canvas.height = window.innerHeight;
+  bg_context = bg_canvas.getContext('2d');
 
+  static_canvas = document.getElementById('static_canvas');
+  active_canvas = document.getElementById('active_canvas');
+  graph_canvas = document.getElementById('graph_canvas');
+  menu_canvas = document.getElementById('menu_canvas');
+  cursor_canvas = document.getElementById('cursor_canvas');
 
   phase = 0;
 
@@ -33,8 +33,8 @@ var init = function () {
 
   board = new Board(board_position, board_size, board_grid,
     board_depth, line_width);
-board = new Board(board_position, board_size, new Point(get_random_int(1, 32), get_random_int(1, 16)),
-board_depth, line_width);
+  //board = new Board(board_position, board_size, new Point(get_random_int(1, 32), get_random_int(1, 16)),
+  //board_depth, line_width);
 
   generate_cells();
   generate_entities();
@@ -45,6 +45,8 @@ board_depth, line_width);
   graph = new Graph(graph_position, graph_size, graph_padding);
   messenger = new Messenger();
   menu = new Menu(menu_position, menu_size, menu_padding, menu_text_size);
+  background = new Background;
+
   entity_painter = new EntityPainter();
   shadow_painter = new ShadowPainter();
   cell_painter = new CellPainter();
@@ -54,6 +56,14 @@ board_depth, line_width);
   date_last_frame = date_started;
   date_last_phase = date_started;
 
+  redraw_background = true;
+  redraw_static = true;
+  redraw_active = true;
+  redraw_graph = true;
+  redraw_menu = true;
+  redraw_cursor = true;
+  redraw_messenger = true;
+  
   state = states.main;
 }; // end init
 
@@ -62,24 +72,24 @@ var set_defaults = function () {
 
   board_position = new Point(240, 100);
   board_size = new Point(800, 400);
-  board_grid = new Point(8, 8);
+  board_grid = new Point(32, 16);
   board_depth = 0.33;
   line_width = 2;
 
-  cursor_position = new Point(340, 50);
+  cursor_position = new Point(300, 50);
   cursor_size = new Point(50, 50);
   cursor_speed = 1000;
 
   populations_length = 32;
-  graph_position = new Point(450, 650);
+  graph_position = new Point(300, 550);
   graph_size = new Point(400, 200);
   //TODO: implement graph_padding
   graph_padding = 25;
 
   menu_position = new Point(400, 100);
-  menu_size = new Point(250, 450);
+  menu_size = new Point(300, 350);
   menu_padding = 20;
-  menu_text_size = 20;
+  menu_text_size = 30;
 
   show_fullscreen = false;
   show_graphs = true;
@@ -203,15 +213,66 @@ var set_states = function () {
   states.about = "about"; //TODO: add about state
 };
 
-var set_state = function (new_state) {
-  state = new_state;
-  consile.override = "";
-};
+var redraw_background;
+var redraw_static;
+var redraw_active;
+var redraw_graph;
+var redraw_menu;
+var redraw_cursor;
+var redraw_messenger;
+
+var change_state = function() {
+  if (new_state == state)
+    return;
+  
+  switch (new_state) {
+  case states.main:
+    state = new_state;
+      redraw_static = true;
+      redraw_active = true;
+      redraw_graph = true;
+      redraw_cursor = true;
+      
+      menu.clear()
+      redraw_menu = false;
+      
+      date_last_phase = new Date().getTime();
+      break;
+  case states.menu:
+    state = new_state;
+    redraw_menu = true;
+      
+    cursor.clear();
+    redraw_cursor = false;
+
+    board.clear();
+    redraw_static = false;
+    redraw_active = false;
+
+    cursor.clear()
+    redraw_graph = false;
+      break;
+  case states.about:
+    state = new_state;
+      break;
+  case states.title:
+    state = new_state;
+      break;
+  }
+}
+
+
+
+
 
 var update = function () {
   var date_this_frame = (new Date().getTime());
   var time_passed_since_last_frame = date_this_frame - date_last_frame;
   var time_passed_since_last_phase = date_this_frame - date_last_phase;
+  
+  
+
+  change_state(new_state);
 
   messenger.update(date_this_frame);
   if (state == states.main) {
@@ -219,6 +280,8 @@ var update = function () {
 
     if (do_auto_phase) {
       if (time_passed_since_last_phase >= time_per_phase) {
+        redraw_static = true;
+        redraw_graph = true;
         date_last_phase = date_this_frame;
         board.next_phase();
       }
@@ -228,46 +291,52 @@ var update = function () {
   }
 
   controller.update(time_passed_since_last_frame);
-
+  
   date_last_frame = date_this_frame;
 }; //end update
 
 var draw = function () {
   //clear canvas
-  canvas_context.clearRect(0, 0, canvas.width, canvas.height);
-
-  if (state == states.main) {
-    board.draw(canvas_context);
-    if (show_graphs) graph.draw(canvas_context);
-    cursor.draw(canvas_context);
-  } else if (state == states.menu) {
-    menu.draw(canvas_context);
-  } else if (state == states.about) {
-
-    var row;
-    var col;
-    var rows = board.rows;
-    var cols = board.cols;
-    var et = [];
-    var ex = [];
-    var ey = [];
-    var x = board.x;
-    var y = board.y;
-    var cw = board.col_width;
-    var rh = board.row_height;
-
-    for (row = 0; row < rows; row++) {
-      for (col = 0; col < cols; col++) {
-        et.push(get_random_int(0, cell_types.length - 1));
-        ex.push(row * cw);
-        ey.push(col * rh);
-      }
-    }
-
-    shadow_painter.draw(canvas_context, et, ex, ey);
+  //bg_context.clearRect(0, 0, bg_canvas.width, bg_canvas.height);
+  if (redraw_background) {
+    background.draw();
+    redraw_background = false;
   }
 
-  messenger.draw();
+  if (redraw_static) {
+    board.static_context.clearRect(0, 0, static_canvas.width, static_canvas.height);
+    board.draw_cells();
+    board.draw_cell_lines();
+    board.draw_static_entities();
+    redraw_static = false;
+  }
+  if (redraw_active) {
+    board.active_context.clearRect(0, 0, active_canvas.width, active_canvas.height);
+    board.draw_extras();
+    board.draw_active_entities();
+    redraw_active = true;
+  }
+  if (redraw_cursor) {
+    cursor.context.clearRect(0, 0, cursor.canvas.width, cursor.canvas.height);
+    cursor.draw2();
+    redraw_cursor = false;
+  }
+  if (redraw_graph && show_graphs) {
+    redraw_graph = false;
+    graph.context.clearRect(0, 0, graph.canvas.width, graph.canvas.height);
+    graph.draw();
+  }
+  if (redraw_menu) {
+    menu.context.clearRect(0, 0, menu.canvas.width, menu.canvas.height);
+    if (state == states.menu)
+      menu.draw();
+    redraw_menu = false;
+  }
+  if (redraw_messenger) {
+    messenger.draw();
+    redraw_messenger = true;
+  }
+
 }; // end draw
 
 var doLoop = function () {

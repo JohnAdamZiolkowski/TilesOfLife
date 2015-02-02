@@ -45,10 +45,14 @@ var menu_text_size;
 
 var colors;
 
-var canvas;
-var canvas_context;
-var buffer;
-var buffer_context;
+var bg_canvas;
+var bg_context;
+
+var static_canvas;
+var active_canvas;
+var graph_canvas;
+var menu_canvas;
+var cursor_canvas;
 
 var entity_painter;
 var shadow_painter;
@@ -62,9 +66,11 @@ var graph;
 var messenger;
 var controller;
 var menu;
+var background;
 
 var state;
 var states;
+var new_state;
 
 var show_graphs;
 var show_fullscreen;

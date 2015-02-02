@@ -14,6 +14,16 @@ var Menu = function (position, size, padding, text_size) {
   this.h = size.y;
   this.padding = padding;
   this.text_size = text_size;
+  
+  this.canvas = menu_canvas;
+  //this.canvas.style.border =  "1px solid blue";
+  
+  this.canvas.width  = this.w + line_width * 2;
+  this.canvas.height = this.h + line_width * 2;
+  this.canvas.style.left = this.x + "px";
+  this.canvas.style.top = this.y + "px";
+  
+  this.context = this.canvas.getContext('2d');
 
 
   this.selected = 0;
@@ -38,8 +48,10 @@ var Menu = function (position, size, padding, text_size) {
   this.items.state_main = this.items[i++];
 
 
-  this.row_height = (this.h - (this.items.length - 1) * this.padding) / this.items.length;
-
+  this.row_height = (this.h + this.padding) / this.items.length;
+  this.bar_height = this.row_height - this.padding;
+  
+  this.text_size = this.bar_height - this.bar_height / 4;
 
   //TODO: appear
   //TODO: end game updates
@@ -62,7 +74,20 @@ var Menu = function (position, size, padding, text_size) {
   //TODO: toggle about information
   //TODO: export current board + population
 
-  this.draw = function (c) {
+  this.resize = function () {
+    
+    var x = window.innerWidth / 2 - this.w / 2;
+    var y = window.innerHeight / 3 - this.h / 2; 
+    
+    this.canvas.style.left = x + "px";
+    this.canvas.style.top = y + "px";
+    this.context = this.canvas.getContext('2d');
+    redraw_menu = true
+  
+  };
+  
+  
+  this.draw = function () {
     var bar_x;
     var bar_y;
     var bar_w;
@@ -73,12 +98,13 @@ var Menu = function (position, size, padding, text_size) {
     var bar_line;
     var text_color;
     var strings;
+    var c = this.context;
 
     strings = this.get_button_text();
-    bar_x = this.x - this.w / 2;
+    bar_x = line_width;//this.x - this.w / 2;
     bar_w = this.w;
     bar_h = this.row_height - this.padding;
-    text_x = this.x;
+    text_x = this.w / 2;
 
     for (var row = 0; row < this.items.length; row++) {
 
@@ -92,8 +118,8 @@ var Menu = function (position, size, padding, text_size) {
         text_color = colors.menu_text_idle.string;
       }
 
-      bar_y = this.y - this.row_height / 2 + row * (this.row_height);
-      text_y = bar_y + (this.padding) / 2 + this.text_size / 2;
+      bar_y = row * (this.row_height) + line_width;
+      text_y = bar_y + (this.bar_height) -this.text_size / 4;
 
       //menu item bar fill
       c.fillRect(bar_x, bar_y, bar_w, bar_h);
@@ -109,6 +135,10 @@ var Menu = function (position, size, padding, text_size) {
 
   };
 
+  this.clear = function () {
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  };
+  
   this.get_button_text = function () {
     var strings = [];
     var item;
@@ -175,6 +205,9 @@ var Menu = function (position, size, padding, text_size) {
     switch (this.items[this.selected]) {
     case this.items.show_graphs:
       show_graphs = !show_graphs;
+      graph.context.clearRect(0, 0, graph.canvas.width, graph.canvas.height);
+      redraw_graph = true;
+      
       break;
     case this.items.show_fullscreen:
       show_fullscreen = !show_fullscreen;
@@ -186,14 +219,13 @@ var Menu = function (position, size, padding, text_size) {
       show_instructions = !show_instructions;
       break;
     case this.items.state_about:
-      state = states.about;
+      new_state = states.about;
       break;
     case this.items.do_auto_phase:
       do_auto_phase = !do_auto_phase;
       break;
     case this.items.state_main:
-      state = states.main;
-      date_last_phase = new Date().getTime();
+        new_state = states.main;
       break;
     }
 

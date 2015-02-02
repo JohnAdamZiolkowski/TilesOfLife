@@ -15,9 +15,30 @@ window.onload = function () {
   doLoop();
 };
 
+var doit;
+function resize_handler() {
+  bg_canvas.width = window.innerWidth;
+  bg_canvas.height = window.innerHeight;
+  background.resize();
+  menu.resize();
+  
+}
+
 window.addEventListener("resize", function (e) {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  
+  new_state = states.menu;
+  
+  clearTimeout(doit);
+  doit = setTimeout(resize_handler, 100);
+  
+//  entity_canvas.width = window.innerWidth;
+//  entity_canvas.height = window.innerHeight;
+//  cell_canvas.width = window.innerWidth;
+//  cell_canvas.height = window.innerHeight;
+//  extra_canvas.width = window.innerWidth;
+//  extra_canvas.height = window.innerHeight;
+//  ui_canvas.width = window.innerWidth;
+//  ui_canvas.height = window.innerHeight;
 }, false);
 
 window.addEventListener("keydown", function (e) {

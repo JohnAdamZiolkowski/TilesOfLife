@@ -85,7 +85,7 @@ var Controller = function () {
     //enter
     if (this.keysDown.hasOwnProperty(this.enter) &&
         ! this.keysDownPrev.hasOwnProperty(this.enter)) {
-      state = states.menu;
+      new_state = states.menu;
       //board.next_phase();
       //date_last_phase = new Date().getTime();
     }
@@ -101,6 +101,7 @@ var Controller = function () {
     //up
     if (this.keysDown.hasOwnProperty(this.up) &&
         !this.keysDownPrev.hasOwnProperty(this.up)) {
+      redraw_menu = true;
       menu.selected--;
       if (menu.selected < 0)
         menu.selected = menu.items.length -1;
@@ -109,6 +110,7 @@ var Controller = function () {
     //down
     if (this.keysDown.hasOwnProperty(this.down) &&
         !this.keysDownPrev.hasOwnProperty(this.down)) {
+      redraw_menu = true;
       menu.selected++
       if (menu.selected >= menu.items.length)
         menu.selected = 0;
@@ -117,6 +119,7 @@ var Controller = function () {
     //enter
     if (this.keysDown.hasOwnProperty(this.enter) &&
         ! this.keysDownPrev.hasOwnProperty(this.enter)) {
+      redraw_menu = true;
       
       menu.select();
       
@@ -127,8 +130,8 @@ var Controller = function () {
     //backspace();
     if (this.keysDown.hasOwnProperty(this.backspace) &&
     ! this.keysDownPrev.hasOwnProperty(this.backspace)) {
-      state = states.main;
-      date_last_phase = new Date().getTime();
+      redraw_menu = true;
+      new_state = states.main;
     }
     
   };
@@ -146,9 +149,11 @@ var Controller = function () {
   }; //end update
   
   this.click = function () {
-    if (state == states.menu)
+    if (state == states.menu) {
+      
+      redraw_menu = true;
       menu.click();
-    else if (state == states.main)
+    }else if (state == states.main)
       ;//TODO: add click handler to main
   };
 };
