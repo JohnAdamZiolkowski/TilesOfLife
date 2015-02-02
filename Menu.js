@@ -222,7 +222,7 @@ var Menu = function (position, size, padding, text_size) {
       show_instructions = !show_instructions;
       break;
     case this.items.state_about:
-      new_state = states.about;
+      //new_state = states.about;
       break;
     case this.items.do_auto_phase:
       do_auto_phase = !do_auto_phase;

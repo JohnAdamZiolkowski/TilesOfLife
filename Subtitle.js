@@ -12,7 +12,7 @@ var Subtitle = function () {
   this.element = document.getElementById('messenger2');
 
   //this.element.style.textAlign = "center";
-  this.element.style.fontSize = 50+"px";
+  this.element.style.fontSize = 48+"px";
 //  this.element.style.margin = "auto";
   
   
@@ -24,11 +24,10 @@ var Subtitle = function () {
   
   this.resize = function () {
     
-    this.x = window.innerWidth / 2 - 200;
-    this.y = window.innerHeight / 2;
+    this.x = window.innerWidth / 2 - 195;
     
     this.element.style.left = this.x + "px";
-    this.element.style.top = 10 + "px";
+    this.element.style.top = 0 + "px";
   }
 
   this.resize();

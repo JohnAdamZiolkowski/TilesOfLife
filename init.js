@@ -94,7 +94,7 @@ var set_defaults = function () {
 
   show_fullscreen = false;
   show_graphs = true;
-  show_performance_data = true;
+  show_performance_data = false;
   show_instructions = true;
   do_auto_phase = true;
   show_entities = true;
