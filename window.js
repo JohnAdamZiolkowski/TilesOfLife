@@ -83,6 +83,11 @@ document.addEventListener("mousemove", function (e) {
     }
 
   }
+
+  if (state == states.menu) {
+   click_hold = false;
+    menu.mouse_move(e.clientX, e.clientY);
+  }
     
   //controller.click(e.pageX, e.pageY);
 

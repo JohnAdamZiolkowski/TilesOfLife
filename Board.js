@@ -591,11 +591,15 @@ var Board = function (position, size, grid, depth, line_width) {
       return_col = Math.floor(return_col);
     }
     if (y < this.y ||
-      y >= this.y + this.h) {
+      y >= this.y + this.h + this.row_height) {
       return_row = -1;
     } else {
       return_row = (y - this.y - this.row_height_2) / this.row_height;
       return_row = Math.floor(return_row);
+      
+      //account for the bottom row being a special case
+      if (return_row > this.rows - 1)
+        return_row--;
     }
 
     var return_point = new Point(return_col, return_row);

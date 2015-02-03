@@ -192,6 +192,13 @@ var Menu = function (position, size, padding, text_size) {
     return strings;
   };
 
+  this.mouse_move = function (x, y) {
+    var row = (y - this.y) / this.row_height;
+    this.selected = Math.floor(row);
+    if (x < this.x || x > this.x + this.h)
+      this.selected = -1;
+    redraw_menu = true;
+  }
 
   this.click = function (x, y) {
 
@@ -203,6 +210,10 @@ var Menu = function (position, size, padding, text_size) {
     } else {
       requestFullscreen();
     }
+    } else {
+      if (this.selected > -1 && this.selected < this.items.length)
+        this.select();
+        
     }
   };
 
