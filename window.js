@@ -58,9 +58,58 @@ window.addEventListener("keyup", function (e) {
 
 document.addEventListener("click", function (e) {
 
-  controller.click();
+  e.preventDefault();
+  
+  controller.click(e.pageX, e.pageY);
+  
+  if (state == states.main) {
+      var target = board.target(cursor.x, cursor.y);
+
+      cursor.trigger(target.col, target.row);
+
+  }
 
 }, false);
+
+document.addEventListener("mousemove", function (e) {
+  
+  cursor.move_to(e.clientX, e.clientY);
+  
+  if (state == states.main) {
+    if (click_hold) {
+      var target = board.target(cursor.x, cursor.y);
+
+      cursor.trigger(target.col, target.row);
+    }
+
+  }
+    
+  //controller.click(e.pageX, e.pageY);
+
+
+}, false);
+
+var click_hold;
+
+document.addEventListener("mousedown", function (e) {
+  
+  click_hold = true;
+
+}, false);
+
+document.addEventListener("mouseup", function (e) {
+  
+  click_hold = false;
+}, false);
+
+
+
+
+
+//document.addEventListener("onmousemove", function (e) {
+//  cursor.move(e.pageX, e.pageY);
+//
+//}, false);
 
 
 //TODO: figure out why fullscreenchange event handler isn't firing

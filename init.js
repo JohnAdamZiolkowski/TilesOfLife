@@ -18,6 +18,9 @@ var init = function () {
   graph_canvas = document.getElementById('graph_canvas');
   menu_canvas = document.getElementById('menu_canvas');
   cursor_canvas = document.getElementById('cursor_canvas');
+  
+  
+    document.body.style.cursor = 'none';
 
   phase = 0;
 
@@ -229,6 +232,8 @@ var change_state = function() {
   switch (new_state) {
   case states.main:
     state = new_state;
+      
+    document.body.style.cursor = 'none';
       redraw_static = true;
       redraw_active = true;
       redraw_graph = true;
@@ -241,6 +246,7 @@ var change_state = function() {
       break;
   case states.menu:
     state = new_state;
+    document.body.style.cursor = 'default';
     redraw_menu = true;
       
     cursor.clear();

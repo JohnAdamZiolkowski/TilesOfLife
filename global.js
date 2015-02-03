@@ -7,6 +7,8 @@ email:  johnadamziolkowski@gmail.com
 
 "use strict";
 
+var version_web = "web 1.0.0.4"
+
 var cells;
 var entities;
 var cellsPrev;

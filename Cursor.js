@@ -49,6 +49,18 @@ var Cursor = function (position, size, speed) {
     this.canvas.style.top = ui_y + "px";
 
   };
+  
+  this.move_to = function(x, y) {
+    this.x = x;
+    this.y = y;
+    this.contain();
+    var ui_x = this.x - this.w / 2 - line_width;
+    var ui_y = this.y - this.h / 2 - line_width;
+    this.canvas.style.left = ui_x + "px";
+    this.canvas.style.top = ui_y + "px";
+  };
+  
+  
   this.contain = function () {
     if (this.x < 0)
       this.x = 0;

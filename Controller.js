@@ -148,12 +148,13 @@ var Controller = function () {
     
   }; //end update
   
-  this.click = function () {
+  this.click = function (x, y) {
     if (state == states.menu) {
       
       redraw_menu = true;
       menu.click();
-    }else if (state == states.main)
-      ;//TODO: add click handler to main
+    } else if (state == states.main) {
+      cursor.move_to(x,y);
+    }
   };
 };

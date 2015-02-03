@@ -29,21 +29,21 @@ var Menu = function (position, size, padding, text_size) {
   this.selected = 0;
 
   this.items = [];
-  this.items.push("Show Fullscreen");
   this.items.push("Show Graphs");
   this.items.push("show Performance Data");
   this.items.push("Show Instructions");
   this.items.push("Do Auto-Phase");
+  this.items.push("Show Fullscreen");
   this.items.push("About Information");
   this.items.push("Dismiss Menu");
 
 
   var i = 0;
-  this.items.show_fullscreen = this.items[i++];
   this.items.show_graphs = this.items[i++];
   this.items.show_performance_data = this.items[i++];
   this.items.show_instructions = this.items[i++];
   this.items.do_auto_phase = this.items[i++];
+  this.items.show_fullscreen = this.items[i++];
   this.items.state_about = this.items[i++];
   this.items.state_main = this.items[i++];
 
@@ -154,7 +154,7 @@ var Menu = function (position, size, padding, text_size) {
           strings.push("Show Graphs");
         break;
       case this.items.show_fullscreen:
-        if (this.selected === 0)
+        if (this.selected === 4)
           strings.push("Click to Toggle Fullscreen");
         else
           strings.push("Toggle Fullscreen");
@@ -172,7 +172,10 @@ var Menu = function (position, size, padding, text_size) {
           strings.push("Show Instructions");
         break;
       case this.items.state_about:
-        strings.push("About Tiles of Life");
+        if (this.selected === 5)
+          strings.push("Version: " + version_web);
+        else
+          strings.push("About Tiles of Life");
         break;
       case this.items.do_auto_phase:
         if (do_auto_phase)
@@ -190,11 +193,11 @@ var Menu = function (position, size, padding, text_size) {
   };
 
 
-  this.click = function () {
+  this.click = function (x, y) {
 
     fullscreenEnabled = document.fullscreenEnabled || document.mozFullScreenEnabled || document.webkitIsFullScreen ? true : false;
 
-    if (this.selected === 0) {
+    if (this.selected === 4) {
     if (fullscreenEnabled) {
       exitFullscreen();
     } else {

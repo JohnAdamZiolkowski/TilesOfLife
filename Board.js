@@ -28,7 +28,7 @@ var Board = function (position, size, grid, depth, line_width) {
   this.static_canvas = static_canvas;
   //this.static_canvas.style.border =  "1px solid blue";
 
-  this.static_canvas.width = this.w + line_width;
+  this.static_canvas.width = this.w + line_width * 2;
   this.static_canvas.height = this.h + line_width + this.row_height;
   this.static_canvas.style.left = this.x + "px";
   this.static_canvas.style.top = this.y + "px";
@@ -38,7 +38,7 @@ var Board = function (position, size, grid, depth, line_width) {
   this.active_canvas = active_canvas;
   //this.active_canvas.style.border =  "1px solid blue";
 
-  this.active_canvas.width = this.w + line_width;
+  this.active_canvas.width = this.w + line_width * 2;
   this.active_canvas.height = this.h + line_width + this.row_height;
   this.active_canvas.style.left = this.x + "px";
   this.active_canvas.style.top = this.y + "px";
@@ -76,11 +76,14 @@ var Board = function (position, size, grid, depth, line_width) {
     var cy = [];
 
     for (var row = 0; row < this.rows; row++) {
+      
+      var y = this.row_height_2 + this.row_height * row;
+      
       for (var col = 0; col < this.cols; col++) {
         var cell = cells[col][row];
         ct.push(get_cell_type_index(cell));
-        cx.push(this.col_width * col);
-        cy.push(this.row_height_2 + this.row_height * row);
+        cx.push(this.col_width * col + this.line_width);
+        cy.push(y);
 
       }
     }
@@ -93,7 +96,7 @@ var Board = function (position, size, grid, depth, line_width) {
       var base_y = this.row_height * row + this.row_height;
 
       for (var col = 0; col < this.cols; col++) {
-        var base_x = this.col_width * col + this.col_width / 2;
+        var base_x = this.col_width * col + this.col_width / 2  + this.line_width;
         cell = cells[col][row];
         if (!check_cell_type(cell, cell_types.grass)) continue;
         if (cell.grass > cell.max_grass / 2) continue;
@@ -144,6 +147,10 @@ var Board = function (position, size, grid, depth, line_width) {
     var ctm;
 
     for (row = 0; row < rows; row++) {
+      
+        row_y = this.row_height_2 + this.row_height * row;
+        row_y2 = row_y + this.row_height;
+      
       for (col = 0; col < cols; col++) {
 
         cell = cells[col][row];
@@ -157,10 +164,8 @@ var Board = function (position, size, grid, depth, line_width) {
         else cell_below = false;
 
 
-        col_x = this.col_width * col;
-        row_y = this.row_height_2 + this.row_height * row;
+        col_x = this.col_width * col + this.line_width;
         col_x2 = col_x + this.col_width;
-        row_y2 = row_y + this.row_height;
 
 
         //left line
@@ -292,7 +297,7 @@ var Board = function (position, size, grid, depth, line_width) {
 
       for (var col = 0; col < this.cols; col++) {
 
-        var base_x = this.col_width * col + this.line_width / 2;
+        var base_x = this.col_width * col + this.line_width + this.line_radius;
 
         offset = 0;
 
@@ -419,7 +424,7 @@ var Board = function (position, size, grid, depth, line_width) {
             ling.push(false);
           }
           //entity circle
-          var base_x = this.col_width * col + this.col_width / 2;
+          var base_x = this.col_width * col + this.col_width / 2 + this.line_width;
           var base_y = this.row_height_2 + this.row_height * row + this.row_height / 2;
           entity_x = base_x;
           entity_y = base_y - this.de_radius + (1 - scale) * this.de_radius;
@@ -497,7 +502,7 @@ var Board = function (position, size, grid, depth, line_width) {
           var bobbing_scaled = bobbing_offset * scale;
 
           //entity circle
-          var base_x = this.col_width * col + this.col_width / 2;
+          var base_x = this.col_width * col + this.col_width / 2 + this.line_width;
           var base_y = this.row_height_2 + this.row_height * row + this.row_height / 2;
           entity_x = base_x;
           entity_y = base_y - this.de_radius + (1 - scale) * this.de_radius;
