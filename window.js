@@ -60,7 +60,9 @@ document.addEventListener("click", function (e) {
 
   e.preventDefault();
   
-  controller.click(e.pageX, e.pageY);
+    //switched from e.pageX/Y
+    //not sure if good idea
+  controller.click(e.clientX, e.clientY);
   
   if (state == states.main) {
       var target = board.target(cursor.x, cursor.y);

@@ -52,33 +52,15 @@ var Menu = function (position, size, padding, text_size) {
   this.bar_height = this.row_height - this.padding;
   
   this.text_size = this.bar_height - this.bar_height / 4;
-
-  //TODO: appear
-  //TODO: end game updates
-  //TODO: end cursor/canvas input
-  //TODO: accept own controls
-
-  //TODO: dismiss
-  //TODO: restart game updates
-  //TODO: reassign controls
-  //TODO: end own controls
-
-  //TODO: toggle graphs
-  //TODO: toggle inspector
-  //TODO: toggle fullscreen
-  //TODO: toggle performance data
-  //TODO: toggle instructions
-  //TODO: toggle auto-phase
-
-  //TODO: generate new world
-  //TODO: toggle about information
-  //TODO: export current board + population
-
+    
   this.resize = function () {
     
     var x = window.innerWidth / 2 - this.w / 2;
     var y = 120; 
     
+      this.x = x;
+      this.y = y;
+      
     this.canvas.style.left = x + "px";
     this.canvas.style.top = y + "px";
     this.context = this.canvas.getContext('2d');
@@ -195,7 +177,7 @@ var Menu = function (position, size, padding, text_size) {
   this.mouse_move = function (x, y) {
     var row = (y - this.y) / this.row_height;
     this.selected = Math.floor(row);
-    if (x < this.x || x > this.x + this.h)
+    if (x < this.x || x > this.x + this.w)
       this.selected = -1;
     redraw_menu = true;
   }
