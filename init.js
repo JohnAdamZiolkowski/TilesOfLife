@@ -18,9 +18,9 @@ var init = function () {
   graph_canvas = document.getElementById('graph_canvas');
   menu_canvas = document.getElementById('menu_canvas');
   cursor_canvas = document.getElementById('cursor_canvas');
+toolbox_canvas = document.getElementById('toolbox_canvas');
   
-  
-    document.body.style.cursor = 'none';
+  document.body.style.cursor = 'none';
 
   phase = 0;
 
@@ -50,6 +50,7 @@ var init = function () {
   menu = new Menu(menu_position, menu_size, menu_padding, menu_text_size);
   background = new Background();
   subtitle = new Subtitle();
+  toolbox = new Toolbox();
 
   entity_painter = new EntityPainter();
   shadow_painter = new ShadowPainter();
@@ -67,6 +68,7 @@ var init = function () {
   redraw_menu = true;
   redraw_cursor = true;
   redraw_messenger = true;
+  redraw_toolbox = true;
   
   state = states.main;
 }; // end init
@@ -224,6 +226,7 @@ var redraw_graph;
 var redraw_menu;
 var redraw_cursor;
 var redraw_messenger;
+var redraw_toolbox;
 
 var change_state = function() {
   if (new_state == state)
@@ -238,6 +241,7 @@ var change_state = function() {
       redraw_active = true;
       redraw_graph = true;
       redraw_cursor = true;
+      redraw_toolbox = true;
       
       menu.clear()
       redraw_menu = false;
@@ -258,6 +262,9 @@ var change_state = function() {
 
     cursor.clear()
     redraw_graph = false;
+      
+      toolbox.clear();
+      redraw_toolbox = false;
       break;
   case states.about:
     state = new_state;
@@ -338,6 +345,11 @@ var draw = function () {
     if (state == states.menu)
       menu.draw();
     redraw_menu = false;
+  }
+  if (redraw_toolbox) {
+    toolbox.context.clearRect(0, 0, toolbox.canvas.width, toolbox.canvas.height);
+      toolbox.draw();
+    redraw_menu = true;
   }
   if (redraw_messenger) {
     if (window.innerWidth < 950)

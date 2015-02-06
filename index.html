@@ -34,14 +34,18 @@ email:  johnadamziolkowski@gmail.com
       position: absolute;
       z-index: 3;
     }
-    #menu_canvas {
+    #toolbox_canvas {
       position: absolute;
       z-index: 4;
+    }
+    #menu_canvas {
+      position: absolute;
+      z-index: 5;
       cursor: none;
     }
     #cursor_canvas {
       position: absolute;
-      z-index: 5;
+      z-index: 6;
     }
     
     .messenger {
@@ -104,6 +108,7 @@ email:  johnadamziolkowski@gmail.com
   <canvas id="graph_canvas"></canvas>
   <canvas id="menu_canvas"></canvas>
   <canvas id="cursor_canvas"></canvas>
+  <canvas id="toolbox_canvas"></canvas>
   <script src="Color.js"></script>
   <script src="Cursor.js"></script>
   <script src="Cell.js"></script>
@@ -126,4 +131,5 @@ email:  johnadamziolkowski@gmail.com
   <script src="CellLinePainter.js"></script>
   <script src="Background.js"></script>
   <script src="Subtitle.js"></script>
+  <script src="Toolbox.js"></script>
 </body>

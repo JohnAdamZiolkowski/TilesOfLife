@@ -58,22 +58,6 @@ var Messenger = function () {
     this.message += "<br>- Space:  place selected";
     this.message += "<br>- +Shift:  fill board";
     this.message += "<br>- Backspace: new board";
-    this.message += "<br><br>";
-
-    this.message += "CELLS";
-    for (var type = 0; type < cell_types.length; type++) {
-      this.message += "<br>- " + cell_types[type].name;
-      if (cursor.entity === false && cursor.type == type)
-        this.message += " <-- SELECTED";
-    }
-    this.message += "<br><br>";
-
-    this.message += "ENTITIES";
-    for (var type = 0; type < entity_types.length; type++) {
-      this.message += "<br>- " + entity_types[type].name;
-      if (cursor.entity && cursor.type == type)
-        this.message += " <-- SELECTED";
-    }
 
     this.message += "<br><br>---<br><br>";
 

@@ -7,7 +7,7 @@ email:  johnadamziolkowski@gmail.com
 
 "use strict";
 
-var version_web = "web 1.0.0.4"
+var version_web = "web 1.0.0.5"
 
 var cells;
 var entities;
@@ -55,6 +55,7 @@ var active_canvas;
 var graph_canvas;
 var menu_canvas;
 var cursor_canvas;
+var toolbox_canvas;
 
 var entity_painter;
 var shadow_painter;
@@ -70,6 +71,7 @@ var subtitle;
 var controller;
 var menu;
 var background;
+var toolbox;
 
 var state;
 var states;

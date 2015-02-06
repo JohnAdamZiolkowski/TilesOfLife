@@ -16,6 +16,7 @@ window.onload = function () {
 };
 
 var doit;
+
 function resize_handler() {
   bg_canvas.width = window.innerWidth;
   bg_canvas.height = window.innerHeight;
@@ -24,24 +25,16 @@ function resize_handler() {
   subtitle.resize();
   graph.resize();
   board.resize();
-  
+  toolbox.resize();
+
 }
 
 window.addEventListener("resize", function (e) {
-  
+
   new_state = states.menu;
-  
+
   clearTimeout(doit);
   doit = setTimeout(resize_handler, 100);
-  
-//  entity_canvas.width = window.innerWidth;
-//  entity_canvas.height = window.innerHeight;
-//  cell_canvas.width = window.innerWidth;
-//  cell_canvas.height = window.innerHeight;
-//  extra_canvas.width = window.innerWidth;
-//  extra_canvas.height = window.innerHeight;
-//  ui_canvas.width = window.innerWidth;
-//  ui_canvas.height = window.innerHeight;
 }, false);
 
 window.addEventListener("keydown", function (e) {
@@ -59,38 +52,42 @@ window.addEventListener("keyup", function (e) {
 document.addEventListener("click", function (e) {
 
   e.preventDefault();
-  
-    //switched from e.pageX/Y
-    //not sure if good idea
+
+  //switched from e.pageX/Y
+  //not sure if good idea
   controller.click(e.clientX, e.clientY);
-  
+
   if (state == states.main) {
-      var target = board.target(cursor.x, cursor.y);
+    //TODO: figure out how the hell this cursor is working
+    var target = board.target(cursor.x, cursor.y);
 
+    if (target.col > 0 && target.row > 0)
       cursor.trigger(target.col, target.row);
-
+    
+    toolbox.click(e.clientX, e.clientY);
   }
 
 }, false);
 
 document.addEventListener("mousemove", function (e) {
-  
+
   cursor.move_to(e.clientX, e.clientY);
-  
+
   if (state == states.main) {
     if (click_hold) {
       var target = board.target(cursor.x, cursor.y);
 
-      cursor.trigger(target.col, target.row);
+        if (target.col > 0 && target.row > 0)
+          cursor.trigger(target.col, target.row);
     }
 
   }
 
   if (state == states.menu) {
-   click_hold = false;
+    click_hold = false;
     menu.mouse_move(e.clientX, e.clientY);
   }
-    
+
   //controller.click(e.pageX, e.pageY);
 
 
@@ -99,13 +96,13 @@ document.addEventListener("mousemove", function (e) {
 var click_hold;
 
 document.addEventListener("mousedown", function (e) {
-  
+
   click_hold = true;
 
 }, false);
 
 document.addEventListener("mouseup", function (e) {
-  
+
   click_hold = false;
 }, false);
 
