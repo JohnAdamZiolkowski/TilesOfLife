@@ -136,9 +136,11 @@ var Toolbox = function () {
       this.context.fillText(entity_types[option].name, center_x, y + option_name_y);
       this.context.fillText("x" + option, center_x, y + option_amount_y);
       
-      et.push(option);
-      ex.push(center_x);
-      ey.push(y + option_image_y);
+      if (option > 0) {
+        et.push(option);
+        ex.push(center_x);
+        ey.push(y + option_image_y);
+      }
     }
     
     cell_painter.draw(this.context, ct, cx, cy);
