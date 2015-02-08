@@ -74,12 +74,22 @@ var Cursor = function (position, size, speed) {
 
 
   this.set_type = function (entity, type) {
+    redraw_cursor = true;
+    redraw_toolbox = true;
     this.entity = entity;
     this.type = type;
+    if (entity) {
+        this.color = entity_types[this.type].color;
+        this.name = entity_types[this.type].name;
+    } else {
+        this.color = cell_types[this.type].color;
+        this.name = cell_types[this.type].name;
+    }
   };
 
   this.cycle_type = function () {
     redraw_cursor = true;
+    redraw_toolbox = true;
     this.type += 1;
     if (this.entity) {
       if (this.type >= entity_types.length) {
@@ -105,6 +115,7 @@ var Cursor = function (position, size, speed) {
   };
   this.recycle_type = function () {
     redraw_cursor = true;
+    redraw_toolbox = true;
     this.type -= 1;
     if (this.entity) {
       if (this.type < 0) {

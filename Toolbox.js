@@ -78,6 +78,8 @@ var Toolbox = function () {
     var cy = [];
 
     var option, x, y, center_x, string;
+    
+    //draw the inspector and cell options
     for (option = 0; option < cell_types.length + 1; option++) {
       x = 0;
       center_x = x + this.col_width / 2;
@@ -112,6 +114,8 @@ var Toolbox = function () {
       cx.push(center_x - board.col_width / 2);
       cy.push(y + option_image_y - board.row_height / 2);
     }
+    
+    //draw the entity options
     for (option = 0; option < entity_types.length; option++) {
       x = this.col_width;
       center_x = x + this.col_width / 2;
@@ -160,20 +164,18 @@ var Toolbox = function () {
     var selected_col = Math.floor((x - this.x) / this.col_width);
     var selected_row = Math.floor((y - this.y) / this.row_height);
     
-    if (selected_col === 0 && selected_row < cell_types.length + 1) {
-      cursor.type = selected_row - 1;
-      cursor.entity = false;
-    }
-    if (selected_col === 1 && selected_row < entity_types.length) {
-      cursor.type = selected_row;
-      cursor.entity = true;
-    }
-    
+    this.select(selected_col, selected_row);
   };
 
-  this.select = function () {
-
+  this.select = function (col, row) {
+    if (col === 0 && row < cell_types.length + 1) {
+      cursor.set_type(false, row - 1);
+    }
+    if (col === 1 && row < entity_types.length) {
+      cursor.set_type(true, row);
+    }
   };
+  
   this.mouse_move = function () {
 
   };

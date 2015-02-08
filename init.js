@@ -349,7 +349,7 @@ var draw = function () {
   if (redraw_toolbox) {
     toolbox.context.clearRect(0, 0, toolbox.canvas.width, toolbox.canvas.height);
       toolbox.draw();
-    redraw_menu = true;
+    redraw_toolbox = false;
   }
   if (redraw_messenger) {
     if (window.innerWidth < 950)
