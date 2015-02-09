@@ -63,7 +63,7 @@ document.addEventListener("click", function (e) {
 
     if (target.col >= 0 && target.row >= 0)
       cursor.trigger(target.col, target.row);
-    
+
     toolbox.click(e.clientX, e.clientY);
   }
 

@@ -13,10 +13,10 @@ var Cursor = function (position, size, speed) {
   this.w = size.x;
   this.h = size.y;
   this.speed = speed;
-  
+
   this.canvas = cursor_canvas;
   //this.canvas.style.border =  "1px solid blue";
-  
+
   this.canvas.width  = this.w + line_width * 2;
   this.canvas.height = this.h + line_width * 2;
   this.canvas.style.left = this.x + "px";
@@ -31,8 +31,8 @@ var Cursor = function (position, size, speed) {
 
   this.move = function (direction, time_passed_since_last_frame) {
     //direction can be any distance from (-2,-2) to (+2,+2)
-    
-    
+
+
     direction.x /= 2;
     direction.y /= 2;
 
@@ -42,14 +42,14 @@ var Cursor = function (position, size, speed) {
     this.x += distance.x * time_passed_since_last_frame / 1000;
     this.y += distance.y * time_passed_since_last_frame / 1000;
     this.contain();
-    
+
     var ui_x = this.x - this.w / 2 - line_width;
     var ui_y = this.y - this.h / 2 - line_width;
     this.canvas.style.left = ui_x + "px";
     this.canvas.style.top = ui_y + "px";
 
   };
-  
+
   this.move_to = function(x, y) {
     this.x = x;
     this.y = y;
@@ -59,8 +59,8 @@ var Cursor = function (position, size, speed) {
     this.canvas.style.left = ui_x + "px";
     this.canvas.style.top = ui_y + "px";
   };
-  
-  
+
+
   this.contain = function () {
     if (this.x < 0)
       this.x = 0;
@@ -173,8 +173,8 @@ var Cursor = function (position, size, speed) {
     c.strokeStyle = strokeStyle;
     c.stroke();
   };
-  
-  
+
+
   this.clear = function () {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   };
@@ -183,29 +183,29 @@ var Cursor = function (position, size, speed) {
       new Point(this.x, this.y + this.h / 4),
       new Point(this.x - this.w / 4, this.y + this.h / 2 + this.h / 8),
       new Point(this.x + this.w / 4, this.y + this.h / 2 + this.h / 8),
-      this.color.string, colors.white.string);
+      this.color.style, colors.white.style);
     this.draw_triangle(this.context,
       new Point(this.x, this.y - this.h / 4),
       new Point(this.x - this.w / 4, this.y - this.h / 2 - this.h / 8),
       new Point(this.x + this.w / 4, this.y - this.h / 2 - this.h / 8),
-      this.color.string, colors.white.string);
+      this.color.style, colors.white.style);
     this.draw_triangle(this.context,
       new Point(this.x - this.w / 4, this.y),
       new Point(this.x - this.w / 2 - this.w / 8, this.y - this.h / 4),
       new Point(this.x - this.w / 2 - this.w / 8, this.y + this.h / 4),
-      this.color.string, colors.white.string);
+      this.color.style, colors.white.style);
     this.draw_triangle(this.context,
       new Point(this.x + this.w / 4, this.y),
       new Point(this.x + this.w / 2 + this.w / 8, this.y - this.h / 4),
       new Point(this.x + this.w / 2 + this.w / 8, this.y + this.h / 4),
-      this.color.string, colors.white.string);
+      this.color.style, colors.white.style);
 
-    this.context.fillStyle = colors.cursor.string;
+    this.context.fillStyle = colors.cursor.style;
     this.context.beginPath();
     this.context.arc(this.x, this.y, 2, 0, 2 * Math.PI);
     this.context.fill();
   };
-  
+
   this.draw2 = function (c) {
     var base_x = this.w / 2 + line_width;
     var base_y = this.h / 2 + line_width;
@@ -219,27 +219,27 @@ var Cursor = function (position, size, speed) {
       new Point(base_x, base_y + h_4),
       new Point(base_x - w_4, base_y + h_2),
       new Point(base_x + w_4, base_y + h_2),
-      this.color.string, colors.white.string);
+      this.color.style, colors.white.style);
     //top
     this.draw_triangle(this.context,
       new Point(base_x, base_y - h_4),
       new Point(base_x - w_4, base_y - h_2),
       new Point(base_x + w_4, base_y - h_2),
-      this.color.string, colors.white.string);
+      this.color.style, colors.white.style);
     //left
     this.draw_triangle(this.context,
       new Point(base_x - w_4, base_y),
       new Point(base_x - w_2, base_y - h_4),
       new Point(base_x - w_2, base_y + h_4),
-      this.color.string, colors.white.string);
+      this.color.style, colors.white.style);
     //right
     this.draw_triangle(this.context,
       new Point(base_x + w_4, base_y),
       new Point(base_x + w_2, base_y - h_4),
       new Point(base_x + w_2, base_y + h_4),
-      this.color.string, colors.white.string);
+      this.color.style, colors.white.style);
 
-    this.context.fillStyle = colors.cursor.string;
+    this.context.fillStyle = colors.cursor.style;
     this.context.beginPath();
     this.context.arc(base_x, base_y, 2, 0, 2 * Math.PI);
     this.context.fill();

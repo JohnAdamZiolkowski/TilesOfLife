@@ -46,15 +46,15 @@ var Board = function (position, size, grid, depth, line_width) {
 
 
   this.resize = function () {
-    var x = window.innerWidth / 2 - this.w / 2; 
+    var x = window.innerWidth / 2 - this.w / 2;
     this.x = x;
     this.active_canvas.style.left = x + "px";
     this.static_canvas.style.left = x + "px";
-    
+
   };
   this.resize();
-  
-  
+
+
   this.clear_active = function () {
     this.active_context.clearRect(0, 0, this.active_canvas.width, this.active_canvas.height);
   };
@@ -76,9 +76,9 @@ var Board = function (position, size, grid, depth, line_width) {
     var cy = [];
 
     for (var row = 0; row < this.rows; row++) {
-      
+
       var y = this.row_height_2 + this.row_height * row;
-      
+
       for (var col = 0; col < this.cols; col++) {
         var cell = cells[col][row];
         ct.push(get_cell_type_index(cell));
@@ -91,7 +91,7 @@ var Board = function (position, size, grid, depth, line_width) {
     cell_painter.draw(this.static_context, ct, cx, cy);
 
     //draw dirt patch on half eaten grass cells
-    this.static_context.fillStyle = colors.dirt.string;
+    this.static_context.fillStyle = colors.dirt.style;
     for (var row = 0; row < this.rows; row++) {
       var base_y = this.row_height * row + this.row_height;
 
@@ -147,10 +147,10 @@ var Board = function (position, size, grid, depth, line_width) {
     var ctm;
 
     for (row = 0; row < rows; row++) {
-      
+
         row_y = this.row_height_2 + this.row_height * row;
         row_y2 = row_y + this.row_height;
-      
+
       for (col = 0; col < cols; col++) {
 
         cell = cells[col][row];
@@ -277,8 +277,8 @@ var Board = function (position, size, grid, depth, line_width) {
   this.dce_radius = get_radius(this.col_width, this.row_height) * 0.75;
   this.dce_amp = this.dce_radius / 2;
   this.dce_freq = 0.5;
-  this.water_color = cell_types.water.color.string;
-  this.water_darker = cell_types.water.color.darken().string;
+  this.water_color = cell_types.water.color.style;
+  this.water_darker = cell_types.water.color.darken().style;
 
   this.draw_extras = function () {
 
@@ -310,7 +310,7 @@ var Board = function (position, size, grid, depth, line_width) {
           cell_above = cells[col][row - 1];
           if (check_cell_type(cell_above, cell_types.water)) {
             // water color overlay that hides the grid line
-            c.fillStyle = colors.water.string;
+            c.fillStyle = colors.water.style;
             c.fillRect(
               base_x,
               base_y - this.line_width - this.line_radius,
@@ -318,7 +318,7 @@ var Board = function (position, size, grid, depth, line_width) {
               offset + this.line_width);
 
             // waving line where the water meets the cell above (darkened once)
-            c.fillStyle = colors.water.darken().string;
+            c.fillStyle = colors.water.darken().style;
             c.fillRect(
               base_x,
               base_y + offset - this.line_width,
@@ -329,7 +329,7 @@ var Board = function (position, size, grid, depth, line_width) {
             var cell_above_color = cell_above.color;
 
             //line of the cell above, not mixed (darkened twice)
-            c.fillStyle = cell_above_color.darken().darken().string;
+            c.fillStyle = cell_above_color.darken().darken().style;
             c.fillRect(
               base_x,
               base_y - this.line_width,
@@ -337,7 +337,7 @@ var Board = function (position, size, grid, depth, line_width) {
               this.line_width);
 
             //shadow of the cell above, not mixed (darkened once)
-            c.fillStyle = cell_above_color.darken().string;
+            c.fillStyle = cell_above_color.darken().style;
             c.fillRect(
               base_x,
               base_y,
@@ -345,7 +345,7 @@ var Board = function (position, size, grid, depth, line_width) {
               offset);
 
             //waving line where the water meets the cell above, mixed (darkened once)
-            c.fillStyle = colors.water.darken().string;
+            c.fillStyle = colors.water.darken().style;
             c.fillRect(
               base_x,
               base_y + offset - this.line_width,
@@ -353,7 +353,7 @@ var Board = function (position, size, grid, depth, line_width) {
               this.line_width);
 
             //shadow of the cell above, mixed (darkened once)
-            c.fillStyle = mix_colors(cell_above_color.darken(), colors.water).string;
+            c.fillStyle = mix_colors(cell_above_color.darken(), colors.water).style;
             c.fillRect(
               base_x,
               base_y + offset,
@@ -513,21 +513,21 @@ var Board = function (position, size, grid, depth, line_width) {
           ey.push(entity_y + bobbing_scaled);
           sx.push(shadow_x);
           sy.push(shadow_y + bobbing_scaled);
-          
+
           //TODO: fix this hack
           if (row == rows-1)
             continue;
-          
+
           var entity_below = entities[col][row+1];
           var entity_below_index = entity_below.type_index;
           if (entity_below_index === 0)
             continue;
           if (entity_below.ling)
             continue;
-          
+
           var cell_below = cells[col][row+1];
           var cell_below_index = cell_below.type_index;
-          
+
           if (cell_below_index == 3) //water
             continue;
           if (cell_below_index == 2) //grass
@@ -536,14 +536,14 @@ var Board = function (position, size, grid, depth, line_width) {
 
           var gross1 = this.row_height_2 + this.row_height * (row+1);
           var gross2 =  gross1 + this.row_height / 2 - this.de_radius;
-          
+
           et.push(entity_below.type_index);
           st.push(cell_below_index);
           ex.push(base_x);
           ey.push(gross2);
           sx.push(shadow_x);
           sy.push(gross1);
-          
+
           //hack end
         }
       }
@@ -578,7 +578,7 @@ var Board = function (position, size, grid, depth, line_width) {
   };
 
   //takes position on canvas
-  //returns location on grid 
+  //returns location on grid
   this.target = function (x, y) {
     var return_col;
     var return_row;
@@ -596,7 +596,7 @@ var Board = function (position, size, grid, depth, line_width) {
     } else {
       return_row = (y - this.y - this.row_height_2) / this.row_height;
       return_row = Math.floor(return_row);
-      
+
       //account for the bottom row being a special case
       if (return_row > this.rows - 1)
         return_row--;

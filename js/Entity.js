@@ -37,7 +37,7 @@ var Entity = function () {
     entity.row = row;
     entity.type_index = get_entity_type_index(entity);
   };
-  
+
   this.choose_action = function (entity) {
     var actions = [];
 
@@ -87,16 +87,16 @@ var Entity = function () {
     //TODO: let lack of water and health also cause death
     if (entity.food <= 0) // || entity.water <= 0 || entity.health <= 0)
       actions.push(action_types.die);
-    
+
     //TODO: weigh options very carefully
     var action = get_random_item(actions);
     if (actions.length === 0)
       action = action_types.nothing;
-    
+
     if (check_entity_type(entity, entity_types.corpse) ||
         check_entity_type(entity, entity_types.corpseling))
       action = action_types.rot;
-    
+
     entity.last_action = action;
     base_entity.perform_action(entity, action);
   }
@@ -143,12 +143,12 @@ var Entity = function () {
     entity.water--;
     if (entity.health > 0)
     entity.health--;
-    
+
     if (entity.food === 0 &&
        entity.water === 0 &&
        entity.health === 0)
       this.delete(entity)
-      
+
     //TODO: update anything?
   }
   this.move = function (entity, new_col, new_row) {
@@ -174,7 +174,7 @@ var Entity = function () {
   this.die = function (entity) {
     if (entity.ling)
       transform_entity(entity, entity_types.corpseling);
-    else 
+    else
       transform_entity(entity, entity_types.corpse);
   };
   this.delete = function (entity) {

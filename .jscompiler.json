@@ -1,0 +1,32 @@
+{
+	"project": "TilesOfLife",
+	"inputs": [
+      "js/Background.js",
+      "js/Board.js",
+      "js/Cell.js",
+      "js/CellLinePainter.js",
+      "js/CellPainter.js",
+      "js/Color.js",
+      "js/Controller.js",
+      "js/Cursor.js",
+      "js/entities.js",
+      "js/Entity.js",
+      "js/EntityPainter.js",
+      "js/global.js",
+      "js/Graph.js",
+      "js/init.js",
+      "js/Menu.js",
+      "js/Messenger.js",
+      "js/Point.js",
+      "js/Population.js",
+      "js/ShadowPainter.js",
+      "js/Subtitle.js",
+      "js/Toolbox.js",
+      "js/utility.js",
+      "js/window.js"
+    ],
+	"output": "web/TilesOfLife.js",
+	"generateMap": false,
+	"mangle": true,
+	"isolate": true
+}

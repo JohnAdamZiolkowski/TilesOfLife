@@ -12,7 +12,7 @@ var Color = function (red, green, blue) {
   this.green = green;
   this.blue = blue;
 
-  this.string = 'rgb(' + this.red + ', ' + this.green + ', ' + this.blue + ')';
+  this.style = 'rgb(' + this.red + ', ' + this.green + ', ' + this.blue + ')';
 
   this.darken = function () {
     var modifier = 1 / 4 * 3;

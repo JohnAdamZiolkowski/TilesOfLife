@@ -14,18 +14,18 @@ var Subtitle = function () {
   //this.element.style.textAlign = "center";
   this.element.style.fontSize = 48+"px";
 //  this.element.style.margin = "auto";
-  
-  
+
+
   this.draw = function () {
     //clear messenger
     this.element.innerHTML = this.text;
   };
-  
-  
+
+
   this.resize = function () {
-    
+
     this.x = window.innerWidth / 2 - 195;
-    
+
     this.element.style.left = this.x + "px";
     this.element.style.top = 0 + "px";
   }

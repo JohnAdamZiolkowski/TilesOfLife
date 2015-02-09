@@ -15,24 +15,24 @@ var Graph = function (position, size, padding) {
   this.row_height = this.h / 2;
   this.col_width = this.w / 2;
   this.padding = padding;
-  
+
   this.radius = get_radius(this.col_width, this.row_height);
-  
+
   this.canvas = graph_canvas;
   //this.canvas.style.border =  "1px solid blue";
-  
+
   this.canvas.width  = this.w + line_width * 2;
   this.canvas.height = this.h + line_width * 2;
   this.canvas.style.left = this.x + "px";
   this.canvas.style.top = this.y + "px";
-  
+
   this.context = this.canvas.getContext('2d');
-  
+
   this.resize = function () {
     var x = window.innerWidth / 2 - this.w / 2;
-    
+
     this.canvas.style.left = x + "px";
-    
+
   };
   this.resize();
 
@@ -43,7 +43,7 @@ var Graph = function (position, size, padding) {
     var end_angle = 0;
     var circle = 2 * Math.PI;
     var population = populations[populations.length - 1];
-    
+
     var center_x = this.w/ 2 + line_width;
     var center_y = this.h/ 2 + line_width;
 
@@ -51,14 +51,14 @@ var Graph = function (position, size, padding) {
 
       end_angle += circle * population.cell_ratios[cell_type];
 
-      c.fillStyle = cell_types[cell_type].color.string;
+      c.fillStyle = cell_types[cell_type].color.style;
       c.beginPath();
       c.moveTo(center_x- this.col_width / 2,center_y - this.row_height / 2);
       c.arc(center_x- this.col_width / 2,center_y- this.row_height / 2, this.radius, start_angle, end_angle);
       c.lineTo(center_x- this.col_width / 2,center_y - this.row_height / 2);
       c.fill();
 
-      c.strokeStyle = colors.cursor.string;
+      c.strokeStyle = colors.cursor.style;
       c.beginPath();
       c.moveTo(center_x- this.col_width / 2,center_y- this.row_height / 2);
       c.arc(center_x- this.col_width / 2,center_y- this.row_height / 2, this.radius, start_angle, end_angle);
@@ -69,14 +69,14 @@ var Graph = function (position, size, padding) {
 
       //line graph
       c.lineWidth = 2;
-      c.strokeStyle = colors.cursor.string;
+      c.strokeStyle = colors.cursor.style;
       c.beginPath();
       c.moveTo(center_x - this.col_width, center_y);
       c.lineTo(center_x - this.col_width, center_y + this.row_height);
       c.lineTo(center_x, center_y + this.row_height);
       c.stroke();
 
-      c.strokeStyle = cell_types[cell_type].color.string;
+      c.strokeStyle = cell_types[cell_type].color.style;
       c.beginPath();
       for (var phase = 0; phase < populations.length; phase++) {
         var x = this.col_width * phase / populations_length;
@@ -94,14 +94,14 @@ var Graph = function (position, size, padding) {
 
       end_angle += circle * population.entity_ratios[entity_type];
 
-      c.fillStyle = entity_types[entity_type].color.string;
+      c.fillStyle = entity_types[entity_type].color.style;
       c.beginPath();
       c.moveTo(center_x + this.col_width / 2,center_y - this.row_height / 2);
       c.arc(center_x + this.col_width / 2,center_y - this.row_height / 2, this.radius * entity_scale, start_angle, end_angle);
       c.lineTo(center_x + this.col_width / 2,center_y - this.row_height / 2);
       c.fill();
 
-      c.strokeStyle = colors.cursor.string;
+      c.strokeStyle = colors.cursor.style;
       c.beginPath();
       c.moveTo(center_x + this.col_width / 2,center_y - this.row_height / 2);
       c.arc(center_x + this.col_width / 2,center_y - this.row_height / 2, this.radius * entity_scale, start_angle, end_angle);
@@ -111,14 +111,14 @@ var Graph = function (position, size, padding) {
       start_angle = end_angle;
 
       //line graph
-      c.strokeStyle = colors.cursor.string;
+      c.strokeStyle = colors.cursor.style;
       c.beginPath();
       c.moveTo(center_x, center_y);
       c.lineTo(center_x,center_y +  this.row_height);
       c.lineTo(center_x + this.col_width,center_y +  this.row_height);
       c.stroke();
 
-      c.strokeStyle = entity_types[entity_type].color.string;
+      c.strokeStyle = entity_types[entity_type].color.style;
       c.beginPath();
       for (var phase = 0; phase < populations.length; phase++) {
         var x = this.col_width * phase / populations_length;

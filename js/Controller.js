@@ -19,14 +19,14 @@ var Controller = function () {
   this.space = 32;
   this.tab = 9;
   this.backspace = 8;
-  
+
   this.keysDownPrev = {};
   this.keysUpPrev = {};
   this.keysDown = {};
   this.keysUp = {};
 
   this.main = function (time_passed_since_last_frame) {
-    
+
     var cursor_direction = new Point(0, 0);
 
     //right
@@ -89,15 +89,15 @@ var Controller = function () {
       //board.next_phase();
       //date_last_phase = new Date().getTime();
     }
-    
+
     //backspace
     if (this.keysDown.hasOwnProperty(this.backspace)) {
       init();
     }
   };
-  
+
   this.menu = function (time_passed_since_last_frame) {
-    
+
     //up
     if (this.keysDown.hasOwnProperty(this.up) &&
         !this.keysDownPrev.hasOwnProperty(this.up)) {
@@ -106,7 +106,7 @@ var Controller = function () {
       if (menu.selected < 0)
         menu.selected = menu.items.length -1;
     }
-    
+
     //down
     if (this.keysDown.hasOwnProperty(this.down) &&
         !this.keysDownPrev.hasOwnProperty(this.down)) {
@@ -115,42 +115,42 @@ var Controller = function () {
       if (menu.selected >= menu.items.length)
         menu.selected = 0;
     }
-    
+
     //enter
     if (this.keysDown.hasOwnProperty(this.enter) &&
         ! this.keysDownPrev.hasOwnProperty(this.enter)) {
       redraw_menu = true;
-      
+
       menu.select();
-      
+
       //board.next_phase();
       //date_last_phase = new Date().getTime();
     }
-    
+
     //backspace();
     if (this.keysDown.hasOwnProperty(this.backspace) &&
     ! this.keysDownPrev.hasOwnProperty(this.backspace)) {
       redraw_menu = true;
       new_state = states.main;
     }
-    
+
   };
-  
+
   this.update = function (time_passed_since_last_frame) {
-    
+
     if (state == states.menu)
       this.menu(time_passed_since_last_frame);
     else if (state == states.main)
       this.main(time_passed_since_last_frame);
-    
+
     this.keysDownPrev = JSON.parse(JSON.stringify(this.keysDown));
     this.keysUpPrev = JSON.parse(JSON.stringify(this.keysUp));
-    
+
   }; //end update
-  
+
   this.click = function (x, y) {
     if (state == states.menu) {
-      
+
       redraw_menu = true;
       menu.click();
     } else if (state == states.main) {

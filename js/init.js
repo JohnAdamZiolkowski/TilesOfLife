@@ -19,7 +19,7 @@ var init = function () {
   menu_canvas = document.getElementById('menu_canvas');
   cursor_canvas = document.getElementById('cursor_canvas');
 toolbox_canvas = document.getElementById('toolbox_canvas');
-  
+
   document.body.style.cursor = 'none';
 
   phase = 0;
@@ -69,7 +69,7 @@ toolbox_canvas = document.getElementById('toolbox_canvas');
   redraw_cursor = true;
   redraw_messenger = true;
   redraw_toolbox = true;
-  
+
   state = states.main;
 }; // end init
 
@@ -231,28 +231,28 @@ var redraw_toolbox;
 var change_state = function() {
   if (new_state == state)
     return;
-  
+
   switch (new_state) {
   case states.main:
     state = new_state;
-      
+
     document.body.style.cursor = 'none';
       redraw_static = true;
       redraw_active = true;
       redraw_graph = true;
       redraw_cursor = true;
       redraw_toolbox = true;
-      
+
       menu.clear()
       redraw_menu = false;
-      
+
       date_last_phase = new Date().getTime();
       break;
   case states.menu:
     state = new_state;
     document.body.style.cursor = 'default';
     redraw_menu = true;
-      
+
     cursor.clear();
     redraw_cursor = false;
 
@@ -262,7 +262,7 @@ var change_state = function() {
 
     cursor.clear()
     redraw_graph = false;
-      
+
       toolbox.clear();
       redraw_toolbox = false;
       break;
@@ -283,8 +283,8 @@ var update = function () {
   var date_this_frame = (new Date().getTime());
   var time_passed_since_last_frame = date_this_frame - date_last_frame;
   var time_passed_since_last_phase = date_this_frame - date_last_phase;
-  
-  
+
+
 
   change_state(new_state);
 
@@ -305,7 +305,7 @@ var update = function () {
   }
 
   controller.update(time_passed_since_last_frame);
-  
+
   date_last_frame = date_this_frame;
 }; //end update
 
@@ -356,7 +356,7 @@ var draw = function () {
       messenger.override = "< expand window for info";
     else
       messenger.override = "";
-    
+
     messenger.draw()
     redraw_messenger = true;
   }

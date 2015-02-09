@@ -14,15 +14,15 @@ var Menu = function (position, size, padding, text_size) {
   this.h = size.y;
   this.padding = padding;
   this.text_size = text_size;
-  
+
   this.canvas = menu_canvas;
   //this.canvas.style.border =  "1px solid blue";
-  
+
   this.canvas.width  = this.w + line_width * 2;
   this.canvas.height = this.h + line_width * 2;
   this.canvas.style.left = this.x + "px";
   this.canvas.style.top = this.y + "px";
-  
+
   this.context = this.canvas.getContext('2d');
 
 
@@ -50,26 +50,26 @@ var Menu = function (position, size, padding, text_size) {
 
   this.row_height = (this.h + this.padding) / this.items.length;
   this.bar_height = this.row_height - this.padding;
-  
+
   this.text_size = this.bar_height - this.bar_height / 4;
-    
+
   this.resize = function () {
-    
+
     var x = window.innerWidth / 2 - this.w / 2;
-    var y = 120; 
-    
+    var y = 120;
+
       this.x = x;
       this.y = y;
-      
+
     this.canvas.style.left = x + "px";
     this.canvas.style.top = y + "px";
     this.context = this.canvas.getContext('2d');
     redraw_menu = true
-  
+
   };
-  
+
   this.resize();
-  
+
   this.draw = function () {
     var bar_x;
     var bar_y;
@@ -92,13 +92,13 @@ var Menu = function (position, size, padding, text_size) {
     for (var row = 0; row < this.items.length; row++) {
 
       if (this.selected == row) {
-        c.fillStyle = colors.menu_fill_active.string;
-        c.strokeStyle = colors.menu_outline_active.string;
-        text_color = colors.menu_text_active.string;
+        c.fillStyle = colors.menu_fill_active.style;
+        c.strokeStyle = colors.menu_outline_active.style;
+        text_color = colors.menu_text_active.style;
       } else {
-        c.strokeStyle = colors.menu_fill_idle.string;
-        c.fillStyle = colors.menu_outline_idle.string;
-        text_color = colors.menu_text_idle.string;
+        c.strokeStyle = colors.menu_fill_idle.style;
+        c.fillStyle = colors.menu_outline_idle.style;
+        text_color = colors.menu_text_idle.style;
       }
 
       bar_y = row * (this.row_height) + line_width;
@@ -121,7 +121,7 @@ var Menu = function (position, size, padding, text_size) {
   this.clear = function () {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   };
-  
+
   this.get_button_text = function () {
     var strings = [];
     var item;
@@ -195,7 +195,7 @@ var Menu = function (position, size, padding, text_size) {
     } else {
       if (this.selected > -1 && this.selected < this.items.length)
         this.select();
-        
+
     }
   };
 
@@ -206,7 +206,7 @@ var Menu = function (position, size, padding, text_size) {
       show_graphs = !show_graphs;
       graph.context.clearRect(0, 0, graph.canvas.width, graph.canvas.height);
       redraw_graph = true;
-      
+
       break;
     case this.items.show_fullscreen:
       show_fullscreen = !show_fullscreen;

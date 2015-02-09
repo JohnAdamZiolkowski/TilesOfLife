@@ -10,26 +10,26 @@ email:  johnadamziolkowski@gmail.com
 var CellLinePainter = function () {
 
   this.n = cell_types.length;
-  
+
   //mixes all the colors in a grid
   this.line_colors = [];
   var col;
   var row;
   for (row = 0; row < this.n; row++) {
     for (col = 0; col < this.n; col++) {
-      
+
       if (col == row) {
-        this.line_colors.push(cell_types[col].color.darken().string);
-        this.line_colors.push(cell_types[col].color.darken().darken().string);
+        this.line_colors.push(cell_types[col].color.darken().style);
+        this.line_colors.push(cell_types[col].color.darken().darken().style);
       }
       else {
-        this.line_colors.push(mix_colors(cell_types[col].color, cell_types[row].color).darken().string);
-        this.line_colors.push(mix_colors(cell_types[col].color, cell_types[row].color).darken().darken().string);
+        this.line_colors.push(mix_colors(cell_types[col].color, cell_types[row].color).darken().style);
+        this.line_colors.push(mix_colors(cell_types[col].color, cell_types[row].color).darken().darken().style);
       }
     }
   }
   this.total = this.line_colors.length;
-  
+
   // takes the following arguments:
   // context: canvas context for drawing
   // lt: array of cell type indexes to draw
@@ -51,7 +51,7 @@ var CellLinePainter = function () {
       lmw[c] = [];
       lmh[c] = [];
     }
-    
+
     //sorts each requested line into mixed color's array
     var l;
     var nl = lt.length;
@@ -64,10 +64,10 @@ var CellLinePainter = function () {
       lmw[c].push(lw[l]);
       lmh[c].push(lh[l]);
     }
-    
+
     var lines_in_color;
-    
-    //draws each line 
+
+    //draws each line
     for (c = 0; c < this.total; c++) {
       context.fillStyle = this.line_colors[c];
       lines_in_color = lmx[c].length;

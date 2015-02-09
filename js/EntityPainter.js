@@ -17,10 +17,10 @@ var EntityPainter = function () {
   var i;
   for (i = 1; i < this.n; ++i) {
     this.entity_color = entity_types[i-1].color;
-    this.entity_colors.push(this.entity_color.string);
-    this.entity_lines.push(this.entity_color.darken().darken().string);
-    //this.entity_colors.push(colors.cursor.string);
-    //this.entity_lines.push(colors.cursor.string);
+    this.entity_colors.push(this.entity_color.style);
+    this.entity_lines.push(this.entity_color.darken().darken().style);
+    //this.entity_colors.push(colors.cursor.style);
+    //this.entity_lines.push(colors.cursor.style);
   }
 
   this.r = board.radius;

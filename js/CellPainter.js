@@ -14,7 +14,7 @@ var CellPainter = function () {
 
   var c;
   for (c = 0; c < this.colors; c++) {
-    this.cell_colors.push(cell_types[c].color.string);
+    this.cell_colors.push(cell_types[c].color.style);
   }
 
   this.w = board.col_width;
@@ -31,18 +31,18 @@ var CellPainter = function () {
      //number of colors
     var colors = this.colors;
     var cells = ct.length;
-    
+
      //color-sorted x positions
     var ccx = new Array(colors);
     var ccy = new Array(colors);
-    
+
     //color
     var c;
     for (c = 0; c < colors; c++) {
       ccx[c] = [];
       ccy[c] = [];
     }
-    
+
     //sorts each requested cell into proper color's array
     var cell;
     for (cell = 0; cell < cells; cell++) {
@@ -51,7 +51,7 @@ var CellPainter = function () {
       ccy[c].push(cy[cell]);
     }
 
-    //draws each cell 
+    //draws each cell
     var cells_in_color;
     for (c = 0; c < colors; c++) {
       context.fillStyle = this.cell_colors[c];

@@ -119,7 +119,7 @@ var Corpse = function () {
   this.max_food = 4;
   this.max_health = 4;
   this.max_water = 4;
-  
+
   this.age = 0;
   this.food = 0;
   this.health = 0;
@@ -141,7 +141,7 @@ var Corpseling = function () {
   this.max_food = 4;
   this.max_health = 4;
   this.max_water = 4;
-  
+
   this.age = 0;
   this.food = 0;
   this.health = 0;

@@ -159,7 +159,7 @@ var count_adjacent_entities = function (entities, col, row, entity_type) {
       count++;
 
   return count;
-}; // end count_adjacent_entities 
+}; // end count_adjacent_entities
 
 //initializes the cells grid
 //uses completely random distribution
@@ -202,7 +202,7 @@ var count_cells_by_type = function (cells, cell_type) {
         count++;
 
   return count;
-}; // end count_cells_by_type 
+}; // end count_cells_by_type
 
 //takes a grid of entities and an entity type
 //returns how many entities match the type
@@ -245,7 +245,7 @@ var get_bobbing_degree = function (amp, freq, col, row) {
 }; // end get_bobbing_degree
 
 var get_propper_sine = function (amp, freq, col, row) {
-  
+
   var time = (new Date().getTime() - date_started) / 1000;
   var offset = amp*(Math.sin(freq*time*2*Math.PI+col+row));
   return offset;

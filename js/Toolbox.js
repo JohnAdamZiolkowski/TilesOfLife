@@ -32,7 +32,7 @@ var Toolbox = function () {
   this.row_height = 100;
   this.col_width = 100;
   this.padding = 5;
-  //  
+  //
   //  this.text_size = this.bar_height - this.bar_height / 4;
 
   //TODO: draw an example of each possible item
@@ -78,7 +78,7 @@ var Toolbox = function () {
     var cy = [];
 
     var option, x, y, center_x, string;
-    
+
     //draw the inspector and cell options
     for (option = 0; option < cell_types.length + 1; option++) {
       x = 0;
@@ -91,30 +91,30 @@ var Toolbox = function () {
         string = cell_types[option - 1].name;
 
       if (cursor.type == option - 1 && !cursor.entity) {
-        this.context.fillStyle = colors.menu_fill_active.string;
-        this.context.strokeStyle = colors.menu_outline_active.string;
+        this.context.fillStyle = colors.menu_fill_active.style;
+        this.context.strokeStyle = colors.menu_outline_active.style;
       } else {
-        this.context.fillStyle = colors.menu_outline_idle.string;
-        this.context.strokeStyle = colors.menu_fill_idle.string;
+        this.context.fillStyle = colors.menu_outline_idle.style;
+        this.context.strokeStyle = colors.menu_fill_idle.style;
       }
       this.context.fillRect(x + this.padding,y + this.padding, option_width, option_height);
       this.context.strokeRect(x + this.padding,y + this.padding, option_width, option_height);
 
       if (cursor.type == option - 1 && !cursor.entity)
-        this.context.fillStyle = colors.menu_text_active.string;
+        this.context.fillStyle = colors.menu_text_active.style;
       else
-        this.context.fillStyle = colors.menu_text_idle.string;
+        this.context.fillStyle = colors.menu_text_idle.style;
       this.context.fillText(string, center_x, y + option_name_y);
       this.context.fillText("x" + option, center_x, y + option_amount_y);
-      
+
       if (option === 0)
         continue;
-      
+
       ct.push(option - 1);
       cx.push(center_x - board.col_width / 2);
       cy.push(y + option_image_y - board.row_height / 2);
     }
-    
+
     //draw the entity options
     for (option = 0; option < entity_types.length; option++) {
       x = this.col_width;
@@ -124,32 +124,32 @@ var Toolbox = function () {
 
 
       if (cursor.type == option && cursor.entity) {
-        this.context.fillStyle = colors.menu_fill_active.string;
-        this.context.strokeStyle = colors.menu_outline_active.string;
+        this.context.fillStyle = colors.menu_fill_active.style;
+        this.context.strokeStyle = colors.menu_outline_active.style;
       } else {
-        this.context.fillStyle = colors.menu_outline_idle.string;
-        this.context.strokeStyle = colors.menu_fill_idle.string;
+        this.context.fillStyle = colors.menu_outline_idle.style;
+        this.context.strokeStyle = colors.menu_fill_idle.style;
       }
       this.context.fillRect(x + this.padding, y + this.padding, option_width, option_height);
       this.context.strokeRect(x + this.padding, y + this.padding, option_width, option_height);
 
       if (cursor.type == option && cursor.entity)
-        this.context.fillStyle = colors.menu_text_active.string;
+        this.context.fillStyle = colors.menu_text_active.style;
       else
-        this.context.fillStyle = colors.menu_text_idle.string;
+        this.context.fillStyle = colors.menu_text_idle.style;
       this.context.fillText(entity_types[option].name, center_x, y + option_name_y);
       this.context.fillText("x" + option, center_x, y + option_amount_y);
-      
+
       if (option > 0) {
         et.push(option);
         ex.push(center_x);
         ey.push(y + option_image_y);
       }
     }
-    
+
     cell_painter.draw(this.context, ct, cx, cy);
     entity_painter.draw(this.context, et, ex, ey);
-    
+
   };
 
   this.clear = function () {
@@ -160,10 +160,10 @@ var Toolbox = function () {
     if (x < this.x || x > this.x + this.w ||
         y < this.y || y > this.y + this.h)
       return;
-    
+
     var selected_col = Math.floor((x - this.x) / this.col_width);
     var selected_row = Math.floor((y - this.y) / this.row_height);
-    
+
     this.select(selected_col, selected_row);
   };
 
@@ -175,7 +175,7 @@ var Toolbox = function () {
       cursor.set_type(true, row);
     }
   };
-  
+
   this.mouse_move = function () {
 
   };

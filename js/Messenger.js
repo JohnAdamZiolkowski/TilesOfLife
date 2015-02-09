@@ -20,7 +20,7 @@ var Messenger = function () {
 
   this.update = function (date_this_frame) {
     redraw_messenger = true;
-    
+
     this.time_passed_since_last_frame = date_this_frame - date_last_frame;
     this.time_passed_since_last_phase = date_this_frame - date_last_phase;
     this.framerates.push(this.time_passed_since_last_frame);
