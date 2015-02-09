@@ -26,7 +26,6 @@ var Subtitle = function () {
 
     this.x = window.innerWidth / 2 - 195;
 
-    this.element.style.left = this.x + "px";
     this.element.style.top = 0 + "px";
   }
 

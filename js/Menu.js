@@ -18,17 +18,20 @@ var Menu = function (position, size, padding, text_size) {
   this.canvas = menu_canvas;
   //this.canvas.style.border =  "1px solid blue";
 
+  
   this.canvas.width  = this.w + line_width * 2;
   this.canvas.height = this.h + line_width * 2;
   this.canvas.style.left = this.x + "px";
   this.canvas.style.top = this.y + "px";
 
   this.context = this.canvas.getContext('2d');
-
+  
+  
 
   this.selected = 0;
 
   this.items = [];
+  this.items.push("Move Toolbox");
   this.items.push("Show Graphs");
   this.items.push("show Performance Data");
   this.items.push("Show Instructions");
@@ -39,6 +42,7 @@ var Menu = function (position, size, padding, text_size) {
 
 
   var i = 0;
+  this.items.move_toolbox = this.items[i++];
   this.items.show_graphs = this.items[i++];
   this.items.show_performance_data = this.items[i++];
   this.items.show_instructions = this.items[i++];
@@ -51,16 +55,30 @@ var Menu = function (position, size, padding, text_size) {
   this.row_height = (this.h + this.padding) / this.items.length;
   this.bar_height = this.row_height - this.padding;
 
-  this.text_size = this.bar_height - this.bar_height / 4;
+  this.text_size = this.bar_height / 2;
 
   this.resize = function () {
 
+
+    
+
+  this.row_height = (this.h + this.padding) / this.items.length;
+  this.bar_height = this.row_height - this.padding;
+
+  this.text_size = this.bar_height / 2;
+    this.context.font = "bold " + this.text_size + "px Droid Sans";
+var width = this.context.measureText("Click to Toggle Fullscreen").width + this.padding;
+  this.w = width;
+  this.canvas.width  = this.w + line_width * 2;
+    
+    
+    
     var x = window.innerWidth / 2 - this.w / 2;
     var y = 120;
 
       this.x = x;
       this.y = y;
-
+    
     this.canvas.style.left = x + "px";
     this.canvas.style.top = y + "px";
     this.context = this.canvas.getContext('2d');
@@ -101,16 +119,18 @@ var Menu = function (position, size, padding, text_size) {
         text_color = colors.menu_text_idle.style;
       }
 
+      
       bar_y = row * (this.row_height) + line_width;
-      text_y = bar_y + (this.bar_height) -this.text_size / 4;
-
+      text_y = bar_y + (this.bar_height / 2) + this.text_size / 2 - line_width;
+      
+      
       //menu item bar fill
       c.fillRect(bar_x, bar_y, bar_w, bar_h);
       c.strokeRect(bar_x, bar_y, bar_w, bar_h);
 
       //menu item bar text
       c.fillStyle = text_color;
-      c.font = this.text_size + "px Arial";
+      c.font = "bold " + this.text_size + "px Droid Sans";
       c.textAlign = "center";
       c.fillText(strings[row], text_x, text_y);
     }
@@ -129,6 +149,12 @@ var Menu = function (position, size, padding, text_size) {
     for (item = 0; item < items_length; item++) {
 
       switch (this.items[item]) {
+      case this.items.move_toolbox:
+        if (toolbox.horizontal)
+          strings.push("Show Toolbox on right");
+        else
+          strings.push("Show Toolbox on bottom");
+        break;
       case this.items.show_graphs:
         if (show_graphs)
           strings.push("Hide Graphs");
@@ -136,7 +162,7 @@ var Menu = function (position, size, padding, text_size) {
           strings.push("Show Graphs");
         break;
       case this.items.show_fullscreen:
-        if (this.selected === 4)
+        if (this.selected === 5)
           strings.push("Click to Toggle Fullscreen");
         else
           strings.push("Toggle Fullscreen");
@@ -154,7 +180,7 @@ var Menu = function (position, size, padding, text_size) {
           strings.push("Show Instructions");
         break;
       case this.items.state_about:
-        if (this.selected === 5)
+        if (this.selected === 6)
           strings.push("Version: " + version_web);
         else
           strings.push("About Tiles of Life");
@@ -186,7 +212,7 @@ var Menu = function (position, size, padding, text_size) {
 
     fullscreenEnabled = document.fullscreenEnabled || document.mozFullScreenEnabled || document.webkitIsFullScreen ? true : false;
 
-    if (this.selected === 4) {
+    if (this.selected === 5) {
     if (fullscreenEnabled) {
       exitFullscreen();
     } else {
@@ -210,6 +236,9 @@ var Menu = function (position, size, padding, text_size) {
       break;
     case this.items.show_fullscreen:
       show_fullscreen = !show_fullscreen;
+      break;
+    case this.items.move_toolbox:
+      toolbox.move();
       break;
     case this.items.show_performance_data:
       show_performance_data = !show_performance_data;

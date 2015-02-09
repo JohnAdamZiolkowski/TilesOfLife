@@ -93,9 +93,9 @@ var set_defaults = function () {
   graph_padding = 25;
 
   menu_position = new Point(400, 100);
-  menu_size = new Point(300, 350);
+  menu_size = new Point(300, 400);
   menu_padding = 20;
-  menu_text_size = 30;
+  menu_text_size = 5;
 
   show_fullscreen = false;
   show_graphs = true;
@@ -265,6 +265,9 @@ var change_state = function() {
 
       toolbox.clear();
       redraw_toolbox = false;
+      
+      graph.clear();
+      redraw_graph = false;
       break;
   case states.about:
     state = new_state;
