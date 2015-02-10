@@ -87,7 +87,7 @@ var Controller = function () {
         ! this.keysDownPrev.hasOwnProperty(this.enter)) {
       new_state = states.menu;
       //board.next_phase();
-      //date_last_phase = new Date().getTime();
+      //date_last_phase = Date.now();
     }
 
     //backspace
@@ -124,7 +124,7 @@ var Controller = function () {
       menu.select();
 
       //board.next_phase();
-      //date_last_phase = new Date().getTime();
+      //date_last_phase = Date.now();
     }
 
     //backspace();

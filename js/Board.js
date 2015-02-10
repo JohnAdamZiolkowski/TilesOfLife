@@ -535,14 +535,15 @@ var Board = function (position, size, grid, depth, line_width) {
               cell_below_index = 1; //dirt shadow
 
           var gross1 = this.row_height_2 + this.row_height * (row+1);
-          var gross2 =  gross1 + this.row_height / 2 - this.de_radius;
+          var gross2 = gross1 + this.row_height / 2 - this.de_radius;
 
           et.push(entity_below.type_index);
           st.push(cell_below_index);
           ex.push(base_x);
           ey.push(gross2);
-          sx.push(shadow_x);
-          sy.push(gross1);
+          sx.push(base_x);
+          sy.push(gross1 + this.row_height_2);
+          ling.push(entity_below.ling);
 
           //hack end
         }

@@ -8,23 +8,17 @@ email:  johnadamziolkowski@gmail.com
 "use strict";
 
 var Toolbox = function () {
-  //  this.x = position.x;
-  //  this.y = position.y;
-  //  this.w = size.x;
-  //  this.h = size.y;
-  //  this.padding = padding;
-  //  this.text_size = text_size;
 
   this.canvas = toolbox_canvas;
   //this.canvas.style.border = "1px solid blue";
 
-
-  this.horizontal = false;
+  if (window.innerHeight > window.innerWidth)
+    this.horizontal = true;
+  else
+    this.horizontal = false;
 
 
   this.padding = 5;
-  //
-  //  this.text_size = this.bar_height - this.bar_height / 4;
 
   //TODO: draw an example of each possible item
   //TODO: have a collapse button to hide the toolbox

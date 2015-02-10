@@ -236,17 +236,15 @@ var get_bobbing_cell = function (col, row, depth, row_height) {
 //uses time and position to get an angle to draw entity floating in water
 //returns the angle
 var get_bobbing_degree = function (amp, freq, col, row) {
-  var time = (new Date().getTime() - date_started) / 1000;
+  var time = seconds_since_start;
   var offset = amp*(Math.sin(freq*time*2*Math.PI+col+row));
   var degree = offset * Math.PI * 2;
   return degree;
-  //ignore board location:
-  //return Math.sin((ticks) / 100 * Math.PI * 2);
 }; // end get_bobbing_degree
 
 var get_propper_sine = function (amp, freq, col, row) {
 
-  var time = (new Date().getTime() - date_started) / 1000;
+  var time = seconds_since_start;
   var offset = amp*(Math.sin(freq*time*2*Math.PI+col+row));
   return offset;
 };

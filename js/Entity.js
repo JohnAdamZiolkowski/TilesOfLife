@@ -73,6 +73,13 @@ var Entity = function () {
           entity.health >= entity.max_health / 2 &&
           entity.water >= entity.max_water / 2)
           actions.push(action_types.evolve);
+    
+    //attack
+    //only if near prey and hungry
+    if (entity.prey)
+      if (entity.food <=  entity.max_food / 2)
+        if (count_adjacent_entities(entitiesPrev, entity.col, entity.row, entity.prey) > 0)
+          actions.push(action_types.attack);
 
         //reproduce
         //only if well fed
@@ -84,8 +91,8 @@ var Entity = function () {
     }
 
     //die
-    //TODO: let lack of water and health also cause death
-    if (entity.food <= 0) // || entity.water <= 0 || entity.health <= 0)
+    //TODO: let lack of water also cause death
+    if (entity.food <= 0 || entity.health <= 0)
       actions.push(action_types.die);
 
     //TODO: weigh options very carefully
@@ -123,6 +130,9 @@ var Entity = function () {
       break;
     case action_types.breed:
       this.breed(entity);
+      break;
+    case action_types.attack:
+      this.attack(entity);
       break;
     case action_types.die:
       this.die(entity);
@@ -191,6 +201,15 @@ var Entity = function () {
       board.set_entity(location.x, location.y, entity.spawn);
     } else {
       entity.food = entity.max_food;
+    }
+  };
+  this.attack = function (entity) {
+    var location = get_random_item(get_adjacent_entities_locations(entity.col, entity.row, entity.prey))
+    if (location) {
+      entity.food = entity.max_food;
+      entities[location.col][location.row].health = 0;
+    } else {
+      //entity.food = entity.max_food;
     }
   };
 };

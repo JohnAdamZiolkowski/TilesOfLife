@@ -52,6 +52,7 @@ var Wolf = function () {
   this.health = this.max_health / 2;
   this.water = this.max_water / 2;
   this.spawn = entity_types.wolfling;
+  this.prey = entity_types.sheep;
 
   this.make = function () {
     return new Wolf();
@@ -97,6 +98,7 @@ var Wolfling = function () {
   this.ling = true;
   this.adult = entity_types.wolf;
   this.max_age = 4;
+  this.prey = entity_types.sheepling;
 
   this.age = 0;
   this.food = this.max_food / 2;

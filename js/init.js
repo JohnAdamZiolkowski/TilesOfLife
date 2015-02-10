@@ -57,7 +57,7 @@ toolbox_canvas = document.getElementById('toolbox_canvas');
   cell_painter = new CellPainter();
   line_painter = new CellLinePainter();
 
-  date_started = new Date().getTime();
+  date_started = Date.now();
   date_last_frame = date_started;
   date_last_phase = date_started;
 
@@ -191,6 +191,7 @@ var set_action_types = function () {
   action_types.evolve = "evolve";
   action_types.die = "die";
   action_types.rot = "rot";
+  action_types.attack = "attack";
 };
 
 var set_entity_types2 = function () {
@@ -246,7 +247,7 @@ var change_state = function() {
       menu.clear()
       redraw_menu = false;
 
-      date_last_phase = new Date().getTime();
+      date_last_phase = Date.now();
       break;
   case states.menu:
     state = new_state;
@@ -280,10 +281,14 @@ var change_state = function() {
 
 
 
-
+var date_this_frame;
+var time_since_start;
+var seconds_since_start;
 
 var update = function () {
-  var date_this_frame = (new Date().getTime());
+  date_this_frame = Date.now();
+  time_since_start = date_this_frame - date_started;
+  seconds_since_start = time_since_start / 1000;
   var time_passed_since_last_frame = date_this_frame - date_last_frame;
   var time_passed_since_last_phase = date_this_frame - date_last_phase;
 
